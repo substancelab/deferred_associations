@@ -144,6 +144,7 @@ module ActiveRecord
             define_method :method_missing do |method, *args|
               #puts "#{self.class}.method_missing(#{method}) (#{collection_without_deferred_save.inspect})"
               collection_without_deferred_save.send(method, *args)
+              collection_without_deferred_save.send(method, *args) unless method == :set_inverse_instance
             end
           end
 
