@@ -23,7 +23,13 @@ module ActiveRecord
         collection_singular_ids = collection_name.singularize + "_ids"
 
         # this will delete all the assocation into the join table after obj.destroy
-        after_destroy { |record| record.save }
+        after_destroy { |record|
+          begin
+            record.save
+          rescue Exception => e
+            logger.warn "Association cleanup after destroy failed with #{e}"
+          end
+        }
 
         attr_accessor :"unsaved_#{collection_name}"
         attr_accessor :"use_original_collection_reader_behavior_for_#{collection_name}"
