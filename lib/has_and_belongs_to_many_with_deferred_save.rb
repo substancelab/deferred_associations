@@ -4,6 +4,8 @@
 module ActiveRecord
   module Associations
     module ClassMethods
+      valid_keys_for_has_and_belongs_to_many_association << :deferred_save
+
       # Instructions:
       #
       # Replace your existing call to has_and_belongs_to_many with has_and_belongs_to_many_with_deferred_save.
@@ -18,11 +20,13 @@ module ActiveRecord
       #    end
       #  end
       def has_and_belongs_to_many_with_deferred_save(*args)
+        args[1] = {} unless args[1].present?
+        args[1][:deferred_save] = true
         has_and_belongs_to_many *args
         collection_name = args[0].to_s
         collection_singular_ids = collection_name.singularize + "_ids"
 
-        # this will delete all the assocation into the join table after obj.destroy
+        # this will delete all the association into the join table after obj.destroy
         after_destroy { |record|
           begin
             record.save
@@ -108,7 +112,10 @@ module ActiveRecord
 
         define_method "initialize_unsaved_#{collection_name}" do |*args|
           #puts "Initialized to #{self.send("#{collection_name}_without_deferred_save").clone.inspect}"
-          self.send "unsaved_#{collection_name}=", self.send("#{collection_name}_without_deferred_save", *args).clone
+          elements = self.send("#{collection_name}_without_deferred_save", *args).clone
+          elements = ArrayToAssociationWrapper.new(elements)
+          elements.defer_association_methods_to self, collection_name
+          self.send "unsaved_#{collection_name}=", elements
             # /\ We initialize it to collection_without_deferred_save in case they just loaded the object from the
             # database, in which case we want unsaved_collection to start out with the "saved collection".
             # Actually, this doesn't clone the Association but the elements array instead (since the clone method is
@@ -117,41 +124,7 @@ module ActiveRecord
             # will also change *collection_without_deferred_save*! (Not what we want! Would result in us saving things
             # immediately, which is exactly what we're trying to avoid.)
 
-          # trick collection_name.include?(obj)
-          # If you use a collection of SignelTableInheritance and didn't :select 'type' the
-          # include? method will not find any subclassed object.
-          class << eval("@unsaved_#{collection_name}")
-            def include_with_deferred_save?(obj)
-              if self.detect { |itm| itm == obj || (itm[:id] == obj[:id] && obj.is_a?(itm.class) ) }
-                return true
-              else
-                return false
-              end
-            end
-            alias_method_chain :include?, 'deferred_save'
-          end
 
-
-          collection_without_deferred_save =  self.send("#{collection_name}_without_deferred_save")
-          # (We don't have access to locals inside a normal class << object block, so we have to do it this way instead.)
-          (class << eval("@unsaved_#{collection_name}"); self end).class_eval do
-            define_method :find do |*args|
-              collection_without_deferred_save.send(:find, *args)
-            end
-            # We have to override these so that it doesn't call Array's version of these methods.
-            # Otherwise user will get a "can't convert Hash into Integer" error
-            define_method :first do |*args|
-              collection_without_deferred_save.send(:first, *args)
-            end
-            define_method :last do |*args|
-              collection_without_deferred_save.send(:last, *args)
-            end
-
-            define_method :method_missing do |method, *args|
-              #puts "#{self.class}.method_missing(#{method}) (#{collection_without_deferred_save.inspect})"
-              collection_without_deferred_save.send(method, *args) unless method == :set_inverse_instance
-            end
-          end
 
         end
         private :"initialize_unsaved_#{collection_name}"

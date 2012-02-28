@@ -133,6 +133,11 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.people.last.                                             should == @people[1] # @people[2] was removed before
       @room.people.find_by_name('Filbert').                          should == @people[0]
     end
+
+    it "should be dumpable with Marshal" do
+      lambda { Marshal.dump(@room.people) }.should_not raise_exception
+      lambda { Marshal.dump(Room.new.people) }.should_not raise_exception
+    end
   end
 
   describe "doors" do
