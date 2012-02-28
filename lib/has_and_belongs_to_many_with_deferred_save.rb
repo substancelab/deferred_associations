@@ -97,7 +97,7 @@ module ActiveRecord
 
         define_method "reload_with_deferred_save_for_#{collection_name}" do
           # Reload from the *database*, discarding any unsaved changes.
-          returning self.send("reload_without_deferred_save_for_#{collection_name}") do
+          self.send("reload_without_deferred_save_for_#{collection_name}").tap do
             self.send "unsaved_#{collection_name}=", nil
               # /\ If we didn't do this, then when we called reload, it would still have the same (possibly invalid) value of
               # unsaved_collection that it had before the reload.
