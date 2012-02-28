@@ -129,6 +129,8 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.people.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
       @room.people.first(:conditions => {:name => 'Filbert'}).       should == @people[0]
       @room.people.last(:conditions => {:name => 'Filbert'}).        should == @people[0]
+      @room.people.first.                                            should == @people[0]
+      @room.people.last.                                             should == @people[1] # @people[2] was removed before
       @room.people.find_by_name('Filbert').                          should == @people[0]
     end
   end
