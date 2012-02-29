@@ -26,14 +26,7 @@ module ActiveRecord
         collection_name = args[0].to_s
         collection_singular_ids = collection_name.singularize + "_ids"
 
-        # this will delete all the association into the join table after obj.destroy
-        after_destroy { |record|
-          begin
-            record.save
-          rescue Exception => e
-            logger.warn "Association cleanup after destroy failed with #{e}"
-          end
-        }
+        add_deletion_callback
 
         attr_accessor :"unsaved_#{collection_name}"
         attr_accessor :"use_original_collection_reader_behavior_for_#{collection_name}"
@@ -129,6 +122,20 @@ module ActiveRecord
         end
         private :"initialize_unsaved_#{collection_name}"
 
+      end
+
+      def add_deletion_callback
+        # this will delete all the association into the join table after obj.destroy,
+        # but is only useful/necessary, if the record is not paranoid?
+        unless (self.respond_to?(:paranoid?) && self.paranoid?)
+          after_destroy { |record|
+            begin
+              record.save
+            rescue Exception => e
+              logger.warn "Association cleanup after destroy failed with #{e}"
+            end
+          }
+        end
       end
     end
   end
