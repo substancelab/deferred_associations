@@ -1,0 +1,9 @@
+0.3.0
+=====
+* method "last" proxies to collections "last" instead of "first"
+* removed singleton methods into a wrapper array
+* renamed to "deferred_associations"
+
+0.2.0
+=====
+* forked from TylerRick
