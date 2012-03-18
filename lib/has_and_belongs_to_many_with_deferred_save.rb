@@ -81,10 +81,6 @@ module ActiveRecord
           # But we only want the old behavior in this case -- most of the time we want the *new* behavior -- so we use
           # @use_original_collection_reader_behavior as a switch.
 
-          if self.respond_to? :"before_save_without_deferred_save_for_#{collection_name}"
-            self.send("before_save_without_deferred_save_for_#{collection_name}")
-          end
-
           self.send "use_original_collection_reader_behavior_for_#{collection_name}=", true
           if self.send("unsaved_#{collection_name}").nil?
             send("initialize_unsaved_#{collection_name}")
@@ -95,7 +91,7 @@ module ActiveRecord
 
           true
         end
-        before_save "do_#{collection_name}_save!"
+        after_save "do_#{collection_name}_save!"
 
 
         define_method "reload_with_deferred_save_for_#{collection_name}" do

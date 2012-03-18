@@ -150,8 +150,12 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.save.should be_true
 
       @room.bs_diff_before_module.should be_true
-      @room.bs_diff_method.should_not    be_true  # Rails 2.3: false; Rails 3.2: nil (before_save filter is not supported)
-      @room.bs_diff_after_module.should  be_false # only before_save filters included before the module detect the change
+      @room.bs_diff_after_module.should  be_true
+      if ActiveRecord::VERSION::STRING >= "3"
+        @room.bs_diff_method.should      be_nil # Rails 3.2: nil (before_save filter is not supported)
+      else
+        @room.bs_diff_method.should      be_true
+      end
     end
 
     it "should act like original habtm when using ID array with array manipulation" do
