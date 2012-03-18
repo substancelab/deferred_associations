@@ -57,10 +57,10 @@ http://github.com/MartinKoerner/deferred_associations/issues
 History
 ======
 
-Most of the code for the habtm association was written by [TylerRick] for his gem [has_and_belongs_to_many_with_deferred](https://github.com/TylerRick/has_and_belongs_to_many_with_deferred)
+Most of the code for the habtm association was written by TylerRick for his gem [has_and_belongs_to_many_with_deferred_save](https://github.com/TylerRick/has_and_belongs_to_many_with_deferred_save)
 Mainly, I changed two things:
-  * added ActiveRecord 3 compatibility
-  * removed singleton methods, because they interfere with caching
+ *  added ActiveRecord 3 compatibility
+ *  removed singleton methods, because they interfere with caching
 
 License
 =======
