@@ -1,3 +1,10 @@
+0.5.0
+=====
+* Added has_many with deferred save, which works like habtm with deferred save
+* Added id setters for AR >= 3.0 compatibility
+* HABTMs are changed in an after_save instead of before_save, dropping the need of
+  special before_save call sequences
+
 0.4.0
 =====
 * Added Rails 3.2.2 compatibility
