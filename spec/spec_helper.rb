@@ -2,9 +2,9 @@ $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 plugin_test_dir = File.dirname(__FILE__)
 
 require 'rubygems'
-#USE_RAILS_3 = true
+USE_AR_3 = true
 
-if definde?(USE_RAILS_3) && USE_RAILS_3
+if defined?(USE_AR_3) && USE_AR_3
   gem 'activerecord', '=3.2.2'
   require 'logger'
   require 'active_record'
