@@ -15,7 +15,7 @@ begin
                        can check inside before_save filters, if the association was altered."
     gem.homepage = "http://github.com/MartinKoerner/deferred_associations"
     gem.email   = "martin.koerner@objectfab.de"
-    gem.authors = ["Martin Körner", "Tyler Rick", "Alessio Caiazza"]
+    gem.authors = ["Martin Koerner", "Tyler Rick", "Alessio Caiazza"]
     gem.add_dependency('activerecord')
     gem.add_development_dependency('rspec')
   end
