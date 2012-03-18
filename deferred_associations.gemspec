@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "deferred_associations"
-  s.version = "0.5.1"
+  s.version = "0.5.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Martin Koerner", "Tyler Rick", "Alessio Caiazza"]
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "Readme.markdown",
     "VERSION",
-    "has_and_belongs_to_many_with_deferred_save.gemspec",
+    "deferred_associations.gemspec",
     "init.rb",
     "install.rb",
     "lib/array_to_association_wrapper.rb",
