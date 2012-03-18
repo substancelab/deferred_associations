@@ -52,14 +52,14 @@ describe "has_and_belongs_to_many_with_deferred_save" do
 
       Room.count_by_sql("select count(*) from people_rooms").should == 2
       @room.valid?
-      @room.errors.on(:people).should == "This room has reached its maximum occupancy"
+      @room.get_error(:people).should == "This room has reached its maximum occupancy"
       @room.people.size.       should == 3 # Just like with normal attributes that fail validation... the attribute still contains the invalid data but we refuse to save until it is changed to something that is *valid*.
     end
 
-    it "when we try to save, it should fail, because room.people is still invaild" do
+    it "when we try to save, it should fail, because room.people is still invalid" do
       @room.save.should == false
       Room.count_by_sql("select count(*) from people_rooms").should == 2 # It's still not there, because it didn't pass the validation.
-      @room.errors.on(:people).should == "This room has reached its maximum occupancy"
+      @room.get_error(:people).should == "This room has reached its maximum occupancy"
       @room.people.size.       should == 3
       @people.map {|p| p.reload; p.rooms.size}.should == [1, 1, 0]
     end
@@ -99,23 +99,23 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.reload.people.size.should == 2
       @people[2].reload.rooms.size.should == 0
 
-      class << @people[2]
-        def validate
-          rooms.each do |room|
-            this_room_unsaved = rooms_without_deferred_save.include?(room) ? 0 : 1
-            if room.people.size + this_room_unsaved > room.maximum_occupancy
-              errors.add :rooms, "This room has reached its maximum occupancy"
-            end
+      obj = @people[2]
+      def obj.extra_validation
+        rooms.each do |room|
+          this_room_unsaved = rooms_without_deferred_save.include?(room) ? 0 : 1
+          if room.people.size + this_room_unsaved > room.maximum_occupancy
+            errors.add :rooms, "This room has reached its maximum occupancy"
           end
         end
       end
+      obj.class.send(:validate, :extra_validation)
 
       @people[2].rooms << @room
       @people[2].rooms.size.should == 1
 
       @room.reload.people.size.should == 2
-      @people[2].valid?
-      @people[2].errors.on(:rooms).should == "This room has reached its maximum occupancy"
+      @people[2].valid?.should be_false
+      @people[2].get_error(:rooms).should == "This room has reached its maximum occupancy"
       @room.reload.people.size.should == 2
     end
 
@@ -137,6 +137,21 @@ describe "has_and_belongs_to_many_with_deferred_save" do
     it "should be dumpable with Marshal" do
       lambda { Marshal.dump(@room.people) }.should_not raise_exception
       lambda { Marshal.dump(Room.new.people) }.should_not raise_exception
+    end
+
+    it "should detect difference in association" do
+      @room = Room.find(@room.id)
+      @room.bs_diff_before_module.should be_nil
+      @room.bs_diff_after_module.should  be_nil
+      @room.bs_diff_method.should        be_nil
+
+      @room.people.size.should == 2
+      @room.people = [@room.people[0]]
+      @room.save.should be_true
+
+      @room.bs_diff_before_module.should be_true
+      @room.bs_diff_method.should_not    be_true  # Rails 2.3: false; Rails 3.2: nil (before_save filter is not supported)
+      @room.bs_diff_after_module.should  be_false # only before_save filters included before the module detect the change
     end
   end
 

@@ -2,9 +2,19 @@ $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 plugin_test_dir = File.dirname(__FILE__)
 
 #require 'multi_rails_init'
-require 'active_record'
-# Workaround for https://rails.lighthouseapp.com/projects/8994/tickets/2577-when-using-activerecordassociations-outside-of-rails-a-nameerror-is-thrown
-ActiveRecord::ActiveRecordError
+require 'rubygems'
+rails3 = true
+
+if rails3
+  gem 'activerecord', '=3.2.2'
+  require 'logger'
+  require 'active_record'
+else
+ gem 'activerecord', '=2.3.14'
+ require 'active_record'
+ # Workaround for https://rails.lighthouseapp.com/projects/8994/tickets/2577-when-using-activerecordassociations-outside-of-rails-a-nameerror-is-thrown
+ ActiveRecord::ActiveRecordError
+end
 
 require plugin_test_dir + '/../init.rb'
 
@@ -19,5 +29,17 @@ Dir["#{plugin_test_dir}/models/*.rb"].each {|file| require file }
 
 RSpec.configure do |config|
   config.before do
+  end
+end
+
+class ActiveRecord::Base
+
+  # Compatibility method for AR 2.3.x and AR 3.2.2
+  def get_error attr
+    if errors.respond_to?(:on)
+      errors.on(attr)
+    else
+      errors[attr].try(:first)
+    end
   end
 end

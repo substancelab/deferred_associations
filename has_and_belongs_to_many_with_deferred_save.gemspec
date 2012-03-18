@@ -4,13 +4,12 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{has_and_belongs_to_many_with_deferred_save}
-  s.version = "0.2.0"
+  s.name = %q{deferred_associations}
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Tyler Rick", "Alessio Caiazza"]
-  s.date = %q{2010-02-25}
-  s.email = %q{github.com@tylerrick.com}
+  s.authors = ["Martin Koerner", "Tyler Rick", "Alessio Caiazza"]
+  s.date = %q{2012-03-18}
   s.files = [
     ".gitignore",
      "Rakefile",
@@ -20,6 +19,7 @@ Gem::Specification.new do |s|
      "init.rb",
      "install.rb",
      "lib/has_and_belongs_to_many_with_deferred_save.rb",
+     "lib/array_to_association_wrapper.rb",
      "spec/.gitignore",
      "spec/db/database.yml",
      "spec/db/schema.rb",
@@ -30,11 +30,11 @@ Gem::Specification.new do |s|
      "spec/spec_helper.rb",
      "uninstall.rb"
   ]
-  s.homepage = %q{http://github.com/TylerRick/has_and_belongs_to_many_with_deferred_save}
+  s.homepage = %q{http://github.com/neogrande/deferred_associations}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{Make ActiveRecord defer/postpone saving the records you add to an habtm (has_and_belongs_to_many) association until you call model.save, allowing validation in the style of normal attributes.}
+  s.summary = %q{Make ActiveRecord defer/postpone saving the records you add to an habtm (has_and_belongs_to_many) or has_many association until you call model.save, allowing validation in the style of normal attributes.}
   s.test_files = [
     "spec/models/door.rb",
      "spec/models/room.rb",

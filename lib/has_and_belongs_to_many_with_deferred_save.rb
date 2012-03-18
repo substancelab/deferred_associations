@@ -61,7 +61,7 @@ module ActiveRecord
         alias_method_chain :"#{collection_singular_ids}", 'deferred_save'
 
 
-        define_method "before_save_with_deferred_save_for_#{collection_name}" do
+        define_method "do_#{collection_name}_save!" do
           # Question: Why do we need this @use_original_collection_reader_behavior stuff?
           # Answer: Because AssociationCollection#replace(other_array) performs a diff between current_array and other_array and deletes/adds only
           # records that have changed.
@@ -78,7 +78,7 @@ module ActiveRecord
 
           self.send "use_original_collection_reader_behavior_for_#{collection_name}=", true
           if self.send("unsaved_#{collection_name}").nil?
-            send("initialize_unsaved_#{collection_name}", *args)
+            send("initialize_unsaved_#{collection_name}")
           end
           self.send "#{collection_name}_without_deferred_save=", self.send("unsaved_#{collection_name}")
             # /\ This is where the actual save occurs.
@@ -86,7 +86,7 @@ module ActiveRecord
 
           true
         end
-        alias_method_chain :"before_save", "deferred_save_for_#{collection_name}"
+        before_save "do_#{collection_name}_save!"
 
 
         define_method "reload_with_deferred_save_for_#{collection_name}" do

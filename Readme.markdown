@@ -3,23 +3,20 @@ Make ActiveRecord defer/postpone saving the records you add to an habtm (has_and
 How to install
 ==============
 
-As Rails plugin:
-    ./script/plugin install git://github.com/TylerRick/has_and_belongs_to_many_with_deferred_save.git
-
-As a gem:
-    sudo gem install has_and_belongs_to_many_with_deferred_save
+    sudo gem install deferred_associations
 
 Usage
 =====
 
     class Room < ActiveRecord::Base
       has_and_belongs_to_many_with_deferred_save :people
+      has_many_with_deferred_save :tables # TODO this doesn't work yet
     end
 
 Motivation
 ==========
 
-Let's say you want to validate the room.people collection and prevent the user from adding more people to the room than will fit. If they do try to add more people than will fit, you want to display a nice error message on the page and let them try again...
+Let's say you want to validate the room.people collections and prevent the user from adding more people to the room than will fit. If they do try to add more people than will fit, you want to display a nice error message on the page and let them try again...
 
 This isn't possible using the standard has_and_belongs_to_many due to these two problems:
 
@@ -39,12 +36,45 @@ The unsaved collection is automatically saved when you call save on the model.
 Compatibility
 =============
 
-Tested with Rails 2.3.4.
+Tested with Rails 2.3.14, 3.2.2
+
+Gotchas
+=======
+
+1. If you want to add before_save filters, which check the difference in your habtm's association, be sure to add them *before* the validation
+
+   class Room
+     before_save :check_diff
+     has_and_belongs_to_many_with_deferred_save :people
+     #before_save :check_diff  <-- this doesn't work, because the people array is saved already
+
+     def check_diff
+       if people != people_without_deferred_save
+        # ...
+       end
+     end
+   end
+
+   Same applies for Rails 2.3's "before_save" method. When it is called, the before_save callbacks from the module were executed already and they wouldn't
+   notice any change in the association.
+
+2. Be aware, that tha habtm association objects sometimes asks the database instead of giving you the data directly from the array. So you can get something
+   like
+
+   room = Room.new
+   room.people << Person.create
+   room.people.first # => nil, since the DB doesn't have the association saved yet
 
 Bugs
 ====
 
-http://github.com/TylerRick/has_and_belongs_to_many_with_deferred_save/issues
+http://github.com/neogrande/deferred_associations/issues
+
+Thanks
+======
+
+A huge Thank you goes to [TylerRick](https://github.com/TylerRick), which wrote the original has_and_belongs_to_many_with_deferred gem for Rails 2.3.
+It helped us in many projects.
 
 History
 =======
@@ -56,5 +86,6 @@ License
 
 This plugin is licensed under the BSD license.
 
+2012 (c) neogrande
 2010 (c) Contributors
 2007 (c) QualitySmith, Inc.
