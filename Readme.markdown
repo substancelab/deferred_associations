@@ -36,7 +36,7 @@ The unsaved collection is automatically saved when you call save on the model.
 Compatibility
 =============
 
-Tested with Rails 2.3.14, 3.2.2
+Tested with Rails 2.3.14, 3.2.2 (There is a bug with id setters in Rails 3.2 (See Bugs))
 
 Gotchas
 =======
@@ -58,7 +58,7 @@ Gotchas
    Same applies for Rails 2.3's "before_save" method. When it is called, the before_save callbacks from the module were executed already and they wouldn't
    notice any change in the association.
 
-2. Be aware, that tha habtm association objects sometimes asks the database instead of giving you the data directly from the array. So you can get something
+2. Be aware, that the habtm association objects sometimes asks the database instead of giving you the data directly from the array. So you can get something
    like
 
    room = Room.new
@@ -67,6 +67,10 @@ Gotchas
 
 Bugs
 ====
+
+
+* In Rails 3.2, you can't use ID setters, since they do not work correctly. Their changes will be saved immediately, but will be restored
+  when you call save.
 
 http://github.com/neogrande/deferred_associations/issues
 
