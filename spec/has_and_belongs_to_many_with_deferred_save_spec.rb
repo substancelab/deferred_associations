@@ -153,6 +153,35 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.bs_diff_method.should_not    be_true  # Rails 2.3: false; Rails 3.2: nil (before_save filter is not supported)
       @room.bs_diff_after_module.should  be_false # only before_save filters included before the module detect the change
     end
+
+    it "should act like original habtm when using ID array with array manipulation" do
+      @room = Room.find(@room.id)
+      @room.people = [@people[0]]
+      @room.save
+      @room = Room.find(@room.id) # we don't want to let id and object setters interfere with each other
+      @room.people2_ids << @people[1].id
+      @room.people2_ids.should == [@people[0].id] # ID array manipulation is ignored
+
+      @room.person_ids.size.should == 1
+      @room.person_ids << @people[1].id
+      @room.person_ids.should == [@people[0].id]
+      Room.find(@room.id).person_ids.should == [@people[0].id]
+      @room.save.should be_true
+      Room.find(@room.id).person_ids.should == [@people[0].id] # ID array manipulation is ignored, too
+    end
+
+    it "should work with id setters" do
+      @room = Room.find(@room.id)
+      @room.people = [@people[0], @people[1]]
+      @room.save
+      @room = Room.find(@room.id)
+      @room.person_ids.should == [@people[0].id, @people[1].id]
+      @room.person_ids = [@people[1].id]
+      @room.person_ids.should == [@people[1].id]
+      Room.find(@room.id).person_ids.should == [@people[0].id,@people[1].id]
+      @room.save.should be_true
+      Room.find(@room.id).person_ids.should == [@people[1].id]
+    end
   end
 
   describe "doors" do

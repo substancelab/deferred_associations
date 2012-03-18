@@ -60,6 +60,15 @@ module ActiveRecord
 
         alias_method_chain :"#{collection_singular_ids}", 'deferred_save'
 
+        # only needed for ActiveRecord >= 3.0
+        if ActiveRecord::VERSION::STRING >= "3"
+          define_method "#{collection_singular_ids}_with_deferred_save=" do |ids|
+            ids = Array.wrap(ids).reject { |id| id.blank? }
+            new_values = self.send("#{collection_name}").klass.find(ids)
+            self.send("#{collection_name}=", new_values)
+          end
+          alias_method_chain :"#{collection_singular_ids}=", 'deferred_save'
+        end
 
         define_method "do_#{collection_name}_save!" do
           # Question: Why do we need this @use_original_collection_reader_behavior stuff?
