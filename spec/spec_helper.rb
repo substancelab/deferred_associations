@@ -1,11 +1,10 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 plugin_test_dir = File.dirname(__FILE__)
 
-#require 'multi_rails_init'
 require 'rubygems'
-rails3 = true
+#USE_RAILS_3 = true
 
-if rails3
+if definde?(USE_RAILS_3) && USE_RAILS_3
   gem 'activerecord', '=3.2.2'
   require 'logger'
   require 'active_record'
@@ -34,7 +33,7 @@ end
 
 class ActiveRecord::Base
 
-  # Compatibility method for AR 2.3.x and AR 3.2.2
+  # Compatibility method for AR 2.3.x and AR 3.2.x
   def get_error attr
     if errors.respond_to?(:on)
       errors.on(attr)

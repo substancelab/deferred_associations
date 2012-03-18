@@ -120,11 +120,11 @@ describe "has_and_belongs_to_many_with_deferred_save" do
     end
 
     it "still lets you do find" do
-      #@room.people2.                     find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
-      #@room.people_without_deferred_save.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
-      #@room.people2.first(:conditions                      => {:name => 'Filbert'}).should == @people[0]
-      #@room.people_without_deferred_save.first(:conditions => {:name => 'Filbert'}).should == @people[0]
-      #@room.people_without_deferred_save.find_by_name('Filbert').should == @people[0]
+      @room.people2.                     find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
+      @room.people_without_deferred_save.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
+      @room.people2.first(:conditions                      => {:name => 'Filbert'}).should == @people[0]
+      @room.people_without_deferred_save.first(:conditions => {:name => 'Filbert'}).should == @people[0]
+      @room.people_without_deferred_save.find_by_name('Filbert').should == @people[0]
 
       @room.people.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
       @room.people.first(:conditions => {:name => 'Filbert'}).       should == @people[0]
