@@ -4,7 +4,6 @@
 module ActiveRecord
   module Associations
     module ClassMethods
-      valid_keys_for_has_and_belongs_to_many_association << :deferred_save
 
       # Instructions:
       #
@@ -20,8 +19,6 @@ module ActiveRecord
       #    end
       #  end
       def has_and_belongs_to_many_with_deferred_save(*args)
-        args[1] = {} unless args[1].present?
-        args[1][:deferred_save] = true
         has_and_belongs_to_many *args
         collection_name = args[0].to_s
         collection_singular_ids = collection_name.singularize + "_ids"
