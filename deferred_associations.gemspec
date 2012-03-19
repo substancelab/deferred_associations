@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "deferred_associations"
-  s.version = "0.5.2"
+  s.version = "0.5.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Martin Koerner", "Tyler Rick", "Alessio Caiazza"]
-  s.date = "2012-03-18"
+  s.date = "2012-03-19"
   s.description = "Makes ActiveRecord defer/postpone saving the records you add to an habtm (has_and_belongs_to_many) or has_many\n                       association until you call model.save, allowing validation in the style of normal attributes. Additionally you\n                       can check inside before_save filters, if the association was altered."
   s.email = "martin.koerner@objectfab.de"
   s.files = [
@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
     "VERSION",
     "deferred_associations.gemspec",
     "init.rb",
-    "install.rb",
     "lib/array_to_association_wrapper.rb",
+    "lib/deferred_associations.rb",
     "lib/has_and_belongs_to_many_with_deferred_save.rb",
     "lib/has_many_with_deferred_save.rb",
     "spec/.gitignore",
@@ -33,8 +33,7 @@ Gem::Specification.new do |s|
     "spec/models/person.rb",
     "spec/models/room.rb",
     "spec/models/table.rb",
-    "spec/spec_helper.rb",
-    "uninstall.rb"
+    "spec/spec_helper.rb"
   ]
   s.homepage = "http://github.com/MartinKoerner/deferred_associations"
   s.require_paths = ["lib"]
