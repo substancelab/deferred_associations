@@ -1,6 +1,3 @@
-# To do: make it work to call this twice in a class. Currently that probably wouldn't work, because it would try to alias methods to existing names...
-# Note: before_save must be defined *before* including this module, not after.
-
 module ActiveRecord
   module Associations
     module ClassMethods
