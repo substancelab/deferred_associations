@@ -1,7 +1,7 @@
 Make ActiveRecord defer/postpone saving the records you add to an habtm (has_and_belongs_to_many) or has_many association
 until you call model.save, allowing validation in the style of normal attributes.
 
-[![Build Status](https://secure.travis-ci.org/MartinKoerner/deferred_associations.png?branch=master)](http://travis-ci.org/MartinKoerner/deferred_associations) [![Dependency Status](https://gemnasium.com/MartinKoerner/deferred_associatons.png?travis)](https://gemnasium.com/MartinKoerner/deferred_associatons)
+[![Build Status](https://secure.travis-ci.org/MartinKoerner/deferred_associations.png?branch=master)](http://travis-ci.org/MartinKoerner/deferred_associations) [![Dependency Status](https://gemnasium.com/MartinKoerner/deferred_associations.png?travis)](https://gemnasium.com/MartinKoerner/deferred_associations)
 
 How to install
 ==============
