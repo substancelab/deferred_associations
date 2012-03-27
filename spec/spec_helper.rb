@@ -1,16 +1,11 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../lib')
 plugin_test_dir = File.dirname(__FILE__)
 
-require 'rubygems'
-USE_AR_3 = true
 
-if defined?(USE_AR_3) && USE_AR_3
-  gem 'activerecord', '=3.2.2'
+require 'active_record'
+if ActiveRecord::VERSION::STRING >= "3"
   require 'logger'
-  require 'active_record'
 else
- gem 'activerecord', '=2.3.14'
- require 'active_record'
  # Workaround for https://rails.lighthouseapp.com/projects/8994/tickets/2577-when-using-activerecordassociations-outside-of-rails-a-nameerror-is-thrown
  ActiveRecord::ActiveRecordError
 end

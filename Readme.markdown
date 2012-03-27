@@ -37,7 +37,7 @@ Usage
 Compatibility
 =============
 
-Tested with Rails 2.3.14, 3.2.2
+Tested with Rails 2.3.14, 3.2.2 on Ruby 1.8.7, 1.9.3 and JRuby 1.6.6
 
 Gotchas
 =======
