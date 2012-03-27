@@ -26,7 +26,7 @@ Usage
         # Neither people nor tables are saved to the database, if a validation error is added
       end
 
-      def check_usage
+      def check_change
         # you can check, if there were changes to the association
         if people != people_without_deferred_save
           self.updated_at = Time.now.utc
