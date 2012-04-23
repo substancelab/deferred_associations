@@ -143,7 +143,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
 
       @room.bs_diff_before_module.should be_true
       @room.bs_diff_after_module.should  be_true
-      if ActiveRecord::VERSION::STRING >= "3"
+      if ar3?
         @room.bs_diff_method.should      be_nil # Rails 3.2: nil (before_save filter is not supported)
       else
         @room.bs_diff_method.should      be_true
@@ -191,8 +191,16 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.people.should == [@people[1]]
     end
 
-    it "should give klass" do
-      @room.people.klass.should == Person
+    it "should give klass in AR 3" do
+      if ar3?
+        @room.people.klass.should == Person
+      end
+    end
+
+    it "should give aliased_table_name in AR 2.3" do
+      unless ar3?
+        @room.people.aliased_table_name.should == "people"
+      end
     end
   end
 
@@ -217,6 +225,10 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @door.rooms.include?(@rooms[0]).should be_true
       @door.rooms.include?(@rooms[1]).should be_false
     end
+  end
+
+  def ar3?
+    ActiveRecord::VERSION::STRING >= "3"
   end
 
 end
