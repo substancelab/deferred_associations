@@ -61,7 +61,8 @@ module ActiveRecord
         if ActiveRecord::VERSION::STRING >= "3"
           define_method "#{collection_singular_ids}_with_deferred_save=" do |ids|
             ids = Array.wrap(ids).reject { |id| id.blank? }
-            new_values = self.send("#{collection_name}").klass.find(ids)
+            reflection_wrapper = self.send("#{collection_name}_without_deferred_save")
+            new_values = reflection_wrapper.klass.find(ids)
             self.send("#{collection_name}=", new_values)
           end
           alias_method_chain :"#{collection_singular_ids}=", 'deferred_save'

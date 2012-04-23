@@ -1,0 +1,38 @@
+PATH
+  remote: /home/martin/Projekte/has_and_belongs_to_many_with_deferred_save
+  specs:
+    deferred_associations (0.5.3)
+      activerecord
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activerecord (2.3.14)
+      activesupport (= 2.3.14)
+    activesupport (2.3.14)
+    diff-lcs (1.1.3)
+    rack (1.4.1)
+    rspec (2.9.0)
+      rspec-core (~> 2.9.0)
+      rspec-expectations (~> 2.9.0)
+      rspec-mocks (~> 2.9.0)
+    rspec-core (2.9.0)
+    rspec-expectations (2.9.0)
+      diff-lcs (~> 1.1.3)
+    rspec-mocks (2.9.0)
+    rspec-rails (1.2.9)
+      rack (>= 1.0.0)
+      rspec (>= 1.2.9)
+    sqlite3 (1.3.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activerecord (= 2.3.14)
+  activerecord-jdbcsqlite3-adapter
+  deferred_associations!
+  jruby-openssl
+  rspec
+  rspec-rails (= 1.2.9)
+  sqlite3

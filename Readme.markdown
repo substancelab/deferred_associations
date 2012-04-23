@@ -47,9 +47,17 @@ Gotchas
 Be aware, that the habtm association objects sometimes asks the database instead of giving you the data directly from the array. So you can get something
 like
 
-    room = Room.new
+    room = Room.create
     room.people << Person.create
     room.people.first # => nil, since the DB doesn't have the association saved yet
+
+
+Also it is good to know, that the array you set to an association is stored there directly, so after setting a list, the typical association
+methods are not working:
+    room = Room.create
+    room.people.klass   # => Person
+    room.people = [Person.first]
+    room.people.klass   # => undefined method klass for #Array:0x007fa3b9efc2c0`
 
 Bugs
 ====

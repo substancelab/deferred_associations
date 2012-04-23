@@ -100,15 +100,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @people[2].reload.rooms.size.should == 0
 
       obj = @people[2]
-      def obj.extra_validation
-        rooms.each do |room|
-          this_room_unsaved = rooms_without_deferred_save.include?(room) ? 0 : 1
-          if room.people.size + this_room_unsaved > room.maximum_occupancy
-            errors.add :rooms, "This room has reached its maximum occupancy"
-          end
-        end
-      end
-      obj.class.send(:validate, :extra_validation)
+      obj.do_extra_validation = true
 
       @people[2].rooms << @room
       @people[2].rooms.size.should == 1
@@ -185,6 +177,22 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       Room.find(@room.id).person_ids.should == [@people[0].id,@people[1].id]
       @room.save.should be_true
       Room.find(@room.id).person_ids.should == [@people[1].id]
+    end
+
+    it "should work with multiple id setters and object setters" do
+      @room = Room.find(@room.id)
+      @room.people     = [@people[0]]
+      @room.person_ids = [@people[0].id, @people[1].id]
+      @room.people     = [@people[1]]
+      @room.person_ids = [@people[0].id, @people[1].id]
+      @room.people     = [@people[1]]
+      @room.save
+      @room = Room.find(@room.id)
+      @room.people.should == [@people[1]]
+    end
+
+    it "should give klass" do
+      @room.people.klass.should == Person
     end
   end
 
