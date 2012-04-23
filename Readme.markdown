@@ -54,6 +54,7 @@ like
 
 Also it is good to know, that the array you set to an association is stored there directly, so after setting a list, the typical association
 methods are not working:
+
     room = Room.create
     room.people.klass   # => Person
     room.people = [Person.first]
