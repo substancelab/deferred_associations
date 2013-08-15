@@ -1,5 +1,5 @@
 PATH
-  remote: D:/Projekte/workspace-rubymine/deferred_associations
+  remote: .
   specs:
     deferred_associations (0.5.4)
       activerecord
