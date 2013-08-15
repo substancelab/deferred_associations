@@ -63,7 +63,12 @@ describe 'has_many_with_deferred_save' do
 
     it 'should defer association methods' do
       @room.chairs.first.should == @chair1
-      @room.chairs.find(:all, :conditions => {:name => "First"}).should == [@chair1]
+      if ar4?
+        @room.chairs.where(:name => "First").should == [@chair1]
+      else
+        @room.chairs.find(:all, :conditions => {:name => "First"}).should == [@chair1]
+      end
+
       lambda {
         @room.chairs.create(:name => "New one")
       }.should raise_error(ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection)

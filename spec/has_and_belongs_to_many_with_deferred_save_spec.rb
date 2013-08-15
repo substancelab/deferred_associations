@@ -112,18 +112,25 @@ describe "has_and_belongs_to_many_with_deferred_save" do
     end
 
     it "still lets you do find" do
-      @room.people2.                     find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
-      @room.people_without_deferred_save.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
-      @room.people2.first(:conditions                      => {:name => 'Filbert'}).should == @people[0]
-      @room.people_without_deferred_save.first(:conditions => {:name => 'Filbert'}).should == @people[0]
-      @room.people_without_deferred_save.find_by_name('Filbert').should == @people[0]
+      if ar4?
+        @room.people2.where(:name => 'Filbert').first.should == @people[0]
+        @room.people_without_deferred_save.where(:name => 'Filbert').first.should == @people[0]
+        @room.people.where(:name => 'Filbert').first.should == @people[0]
+      else
+        @room.people2.                     find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
+        @room.people_without_deferred_save.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
+        @room.people2.first(:conditions                      => {:name => 'Filbert'}).should == @people[0]
+        @room.people_without_deferred_save.first(:conditions => {:name => 'Filbert'}).should == @people[0]
 
-      @room.people.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
-      @room.people.first(:conditions => {:name => 'Filbert'}).       should == @people[0]
-      @room.people.last(:conditions => {:name => 'Filbert'}).        should == @people[0]
-      @room.people.first.                                            should == @people[0]
-      @room.people.last.                                             should == @people[1] # @people[2] was removed before
-      @room.people.find_by_name('Filbert').                          should == @people[0]
+        @room.people.find(:first, :conditions => {:name => 'Filbert'}).should == @people[0]
+        @room.people.first(:conditions => {:name => 'Filbert'}).       should == @people[0]
+        @room.people.last(:conditions => {:name => 'Filbert'}).        should == @people[0]
+      end
+
+      @room.people.first.                                        should == @people[0]
+      @room.people.last.                                         should == @people[1] # @people[2] was removed before
+      @room.people.find_by_name('Filbert').                      should == @people[0]
+      @room.people_without_deferred_save.find_by_name('Filbert').should == @people[0]
     end
 
     it "should be dumpable with Marshal" do
@@ -143,10 +150,10 @@ describe "has_and_belongs_to_many_with_deferred_save" do
 
       @room.bs_diff_before_module.should be_true
       @room.bs_diff_after_module.should  be_true
-      if ar3?
-        @room.bs_diff_method.should      be_nil # Rails 3.2: nil (before_save filter is not supported)
-      else
+      if ar2?
         @room.bs_diff_method.should      be_true
+      else
+        @room.bs_diff_method.should      be_nil # Rails 3.2: nil (before_save filter is not supported)
       end
     end
 
@@ -191,14 +198,14 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.people.should == [@people[1]]
     end
 
-    it "should give klass in AR 3" do
-      if ar3?
+    it "should give klass in AR 3/4" do
+      unless ar2?
         @room.people.klass.should == Person
       end
     end
 
     it "should give aliased_table_name in AR 2.3" do
-      unless ar3?
+      if ar2?
         @room.people.aliased_table_name.should == "people"
       end
     end
@@ -226,9 +233,4 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @door.rooms.include?(@rooms[1]).should be_false
     end
   end
-
-  def ar3?
-    ActiveRecord::VERSION::STRING >= "3"
-  end
-
 end

@@ -37,3 +37,11 @@ class ActiveRecord::Base
     end
   end
 end
+
+def ar2?
+  ActiveRecord::VERSION::STRING < "3"
+end
+
+def ar4?
+  ActiveRecord::VERSION::STRING >= "4"
+end
