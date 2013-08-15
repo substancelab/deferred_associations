@@ -1,8 +1,8 @@
 class Room < ActiveRecord::Base
 
-  attr :bs_diff_before_module, true
-  attr :bs_diff_after_module, true
-  attr :bs_diff_method, true
+  attr_accessor :bs_diff_before_module
+  attr_accessor :bs_diff_after_module
+  attr_accessor :bs_diff_method
 
   before_save :diff_before_module
 
