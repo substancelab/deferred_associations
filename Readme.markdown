@@ -82,4 +82,4 @@ License
 
 This plugin is licensed under the BSD license.
 
-2012 (c) Martin Körner
+2013 (c) Martin Körner
