@@ -8,5 +8,3 @@ gem "sqlite3", :platforms=> [:ruby, :mswin, :mingw]
 gem 'activerecord', '=2.3.18'
 
 gem 'rspec-rails', '=1.2.9'
-
-gemspec :path=>"../"
