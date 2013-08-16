@@ -20,3 +20,5 @@ matrix:
       gemfile: gemfiles/ar4.0.0.gemfile
     - rvm: jruby-18mode
       gemfile: gemfiles/ar4.0.0.gemfile
+    - rvm: 2.0.0
+      gemfile: gemfiles/ar2.3.18.gemfile
