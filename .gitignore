@@ -1,3 +1,4 @@
 pkg
 *.db
 .idea
+spec/test.log
