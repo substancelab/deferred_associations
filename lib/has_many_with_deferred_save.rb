@@ -63,7 +63,7 @@ module ActiveRecord
           collection_singular_ids = "#{collection_name.singularize}_ids"
           define_method "#{collection_singular_ids}_with_deferred_save=" do |ids|
             ids = Array.wrap(ids).reject { |id| id.blank? }
-            new_values = self.send("#{collection_name}").klass.find(ids)
+            new_values = self.send("#{collection_name}_without_deferred_save").klass.find(ids)
             self.send("#{collection_name}=", new_values)
           end
           alias_method_chain :"#{collection_singular_ids}=", 'deferred_save'

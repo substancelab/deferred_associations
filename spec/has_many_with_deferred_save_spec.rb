@@ -18,6 +18,15 @@ describe 'has_many_with_deferred_save' do
     Room.find(@room.id).tables.should == [@table1, @table2]
   end
 
+  it 'should work with tables obj setter/getter, used twice' do
+      @room.tables.should == [@table1]
+      @room.tables = [@table1]
+      @room.tables = [@table1, @table2]
+      Room.find(@room.id).tables.should == [@table1] # not saved yet
+      @room.save.should be_true
+      Room.find(@room.id).tables.should == [@table1, @table2]
+    end
+
   it 'should work with tables id setter/getter' do
     @room.table_ids.should == [@table1.id]
     @room.table_ids = [@table1.id, @table2.id]
@@ -25,6 +34,15 @@ describe 'has_many_with_deferred_save' do
     @room.save.should be_true
     Room.find(@room.id).table_ids.should == [@table1.id, @table2.id]
   end
+
+  it 'should work with tables id setter/getter, used twice' do
+      @room.table_ids.should == [@table1.id]
+      @room.table_ids = [@table1.id]
+      @room.table_ids = [@table1.id, @table2.id]
+      Room.find(@room.id).table_ids.should == [@table1.id] # not saved yet
+      @room.save.should be_true
+      Room.find(@room.id).table_ids.should == [@table1.id, @table2.id]
+    end
 
   it 'should work with array methods' do
     @room.tables.should == [@table1]
