@@ -55,7 +55,7 @@ module ActiveRecord
           result
         end
 
-        alias_mthod_chain collection_name, :deferred_save
+        alias_method_chain collection_name, :deferred_save
       end
 
       def define_id_setter collection_name
