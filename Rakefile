@@ -18,6 +18,7 @@ begin
     gem.authors = ["Martin Koerner", "Tyler Rick", "Alessio Caiazza"]
     gem.add_dependency('activerecord')
     gem.add_development_dependency('rspec')
+    gem.files.exclude 'gemfiles', '.travis.yml'
   end
 
   Jeweler::GemcutterTasks.new

@@ -1,3 +1,8 @@
+0.5.5
+=====
+* id-setter for has_many associations couldn't be used twice on the same object
+* id-getter for has_many associations always returned the saved IDs, even if a new array was set
+
 0.5.0
 =====
 * Added has_many with deferred save, which works like habtm with deferred save
