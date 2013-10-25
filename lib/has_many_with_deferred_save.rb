@@ -16,6 +16,7 @@ module ActiveRecord
         define_obj_setter    collection_name
         define_obj_getter    collection_name
         define_id_setter     collection_name
+        define_id_getter     collection_name
 
         define_update_method collection_name
         define_reload_method collection_name
@@ -54,7 +55,7 @@ module ActiveRecord
           result
         end
 
-        alias_method_chain collection_name, :deferred_save
+        alias_mthod_chain collection_name, :deferred_save
       end
 
       def define_id_setter collection_name
@@ -68,6 +69,14 @@ module ActiveRecord
           end
           alias_method_chain :"#{collection_singular_ids}=", 'deferred_save'
         end
+      end
+
+      def define_id_getter collection_name
+        collection_singular_ids = "#{collection_name.singularize}_ids"
+        define_method "#{collection_singular_ids}_with_deferred_save" do
+          self.send(collection_name).map { |e| e[:id] }
+        end
+        alias_method_chain :"#{collection_singular_ids}", 'deferred_save'
       end
 
       def define_update_method collection_name

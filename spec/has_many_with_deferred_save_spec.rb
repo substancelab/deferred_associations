@@ -14,6 +14,8 @@ describe 'has_many_with_deferred_save' do
     @room.tables.should == [@table1]
     @room.tables = [@table1, @table2]
     Room.find(@room.id).tables.should == [@table1] # not saved yet
+    @room.tables.should == [@table1, @table2]
+    @room.table_ids.should == [@table1.id, @table2.id]
     @room.save.should be_true
     Room.find(@room.id).tables.should == [@table1, @table2]
   end
@@ -23,6 +25,8 @@ describe 'has_many_with_deferred_save' do
       @room.tables = [@table1]
       @room.tables = [@table1, @table2]
       Room.find(@room.id).tables.should == [@table1] # not saved yet
+      @room.table_ids.should == [@table1.id, @table2.id]
+      @room.tables.should == [@table1, @table2]
       @room.save.should be_true
       Room.find(@room.id).tables.should == [@table1, @table2]
     end
