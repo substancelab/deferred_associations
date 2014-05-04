@@ -98,13 +98,13 @@ module ActiveRecord
       end
 
       def define_reload_method collection_name
-        define_method "reload_with_deferred_save_for_#{collection_name}" do
+        define_method "reload_with_deferred_save_for_#{collection_name}" do |*args|
           # Reload from the *database*, discarding any unsaved changes.
-          self.send("reload_without_deferred_save_for_#{collection_name}").tap do
+          self.send("reload_without_deferred_save_for_#{collection_name}", *args).tap do
             instance_variable_set "@hmwds_temp_#{collection_name}", nil
           end
         end
-        alias_method_chain :"reload", "deferred_save_for_#{collection_name}"
+        alias_method_chain :reload, "deferred_save_for_#{collection_name}"
       end
     end
   end

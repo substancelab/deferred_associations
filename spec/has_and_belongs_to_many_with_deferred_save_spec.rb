@@ -209,6 +209,14 @@ describe "has_and_belongs_to_many_with_deferred_save" do
         @room.people.aliased_table_name.should == "people"
       end
     end
+
+    it "should support reload both with and without params" do
+      # find options are deprecated with AR 4, but reload still
+      # supports them
+      @room.reload.id.should == @room.id
+      with_param = @room.reload(:select => 'id')
+      with_param.id.should == @room.id
+    end
   end
 
   describe "doors" do

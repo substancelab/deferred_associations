@@ -1,3 +1,8 @@
+0.5.6
+=====
+* .reload method on AR objects can contain an optional parameter. Our alias method
+  have to support this
+
 0.5.5
 =====
 * id-setter for has_many associations couldn't be used twice on the same object
