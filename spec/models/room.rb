@@ -13,6 +13,9 @@ class Room < ActiveRecord::Base
   has_many_with_deferred_save :tables
   has_many_with_deferred_save :chairs, :through => :tables #TODO test compatibility with through associations
 
+  has_and_belongs_to_many_with_deferred_save :doors
+  has_many_with_deferred_save :tables
+
   before_save :diff_after_module
 
   validate :people_count

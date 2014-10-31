@@ -25,13 +25,6 @@ describe "has_and_belongs_to_many_with_deferred_save" do
         @room.unsaved_people.object_id
     end
 
-    it "should allow loading model files multiple times" do
-      file = File.join(File.dirname(__FILE__), 'models', 'room.rb')
-      load file
-      load file
-      @room.people_without_deferred_save.should == []
-    end
-
     it "after adding people to room, it should not have saved anything to the database" do
       @room.people << @people[0]
       @room.people << @people[1]
@@ -75,7 +68,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.reload
       @room.people.size.                                     should == 2
       @room.people_without_deferred_save.size.               should == 2
-      @people.map {|p| p.reload; p.rooms.size}.                        should == [1, 1, 0]
+      @people.map {|p| p.reload; p.rooms.size}.              should == [1, 1, 0]
     end
 
     it "if they try to go around our accessors and use the original accessors, then (and only then) will the exception be raised in before_adding_person..." do
