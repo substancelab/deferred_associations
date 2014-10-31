@@ -25,6 +25,13 @@ describe "has_and_belongs_to_many_with_deferred_save" do
         @room.unsaved_people.object_id
     end
 
+    it "should allow loading model files multiple times" do
+      file = File.join(File.dirname(__FILE__), 'models', 'room.rb')
+      load file
+      load file
+      @room.people_without_deferred_save.should == []
+    end
+
     it "after adding people to room, it should not have saved anything to the database" do
       @room.people << @people[0]
       @room.people << @people[1]

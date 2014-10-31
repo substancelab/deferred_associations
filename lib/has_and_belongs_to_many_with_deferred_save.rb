@@ -16,9 +16,12 @@ module ActiveRecord
       #    end
       #  end
       def has_and_belongs_to_many_with_deferred_save(*args)
-        has_and_belongs_to_many *args
         collection_name = args[0].to_s
         collection_singular_ids = collection_name.singularize + "_ids"
+
+        return if method_defined?("#{collection_name}_with_deferred_save")
+
+        has_and_belongs_to_many *args
 
         add_deletion_callback
 

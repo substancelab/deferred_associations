@@ -3,9 +3,11 @@ module ActiveRecord
     module ClassMethods
 
       def has_many_with_deferred_save *args
-        has_many *args
+        collection_name = args[0].to_s
 
-        collection_name         = args[0].to_s
+        return if method_defined?("#{collection_name}_with_deferred_save")
+
+        has_many *args
 
         if args[1].is_a?(Hash) && args[1].keys.include?(:through)
           logger.warn "You are using the option :through on #{self.name}##{collection_name}. This was not tested very much with has_many_with_deferred_save. Please write many tests for your functionality!"
