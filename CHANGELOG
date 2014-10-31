@@ -1,3 +1,7 @@
+0.5.7
+=====
+* fix a problem, when model is loaded multiple times
+
 0.5.6
 =====
 * .reload method on AR objects can contain an optional parameter. Our alias method
