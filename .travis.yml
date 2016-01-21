@@ -17,11 +17,15 @@ gemfile:
 
 matrix:
   exclude:
+  - rvm: 1.9.3
+      gemfile: gemfiles/ar5.0.0.beta1.gemfile
     - rvm: 2.2.3
       gemfile: gemfiles/ar2.3.18.gemfile
     - rvm: 2.3.0
       gemfile: gemfiles/ar2.3.18.gemfile
     - rvm: jruby-19mode
       gemfile: gemfiles/ar2.3.18.gemfile
+    - rvm: jruby-19mode
+      gemfile: gemfiles/ar5.0.0.beta1.gemfile
     - rvm: jruby-9.0.4.0
       gemfile: gemfiles/ar2.3.18.gemfile
