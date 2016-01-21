@@ -10,7 +10,7 @@ script: "bundle exec rspec"
 
 gemfile:
   - gemfiles/ar2.3.18.gemfile
-  - gemfiles/ar3.2.14.gemfile
+  - gemfiles/ar3.2.22.gemfile
   - gemfiles/ar4.1.14.gemfile
   - gemfiles/ar4.2.5.gemfile
   - gemfiles/ar5.0.0.beta1.gemfile
