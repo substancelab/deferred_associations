@@ -16,7 +16,7 @@ describe 'has_many_with_deferred_save' do
     Room.find(@room.id).tables.should == [@table1] # not saved yet
     @room.tables.should == [@table1, @table2]
     @room.table_ids.should == [@table1.id, @table2.id]
-    @room.save.should be_true
+    @room.save.should be true
     Room.find(@room.id).tables.should == [@table1, @table2]
   end
 
@@ -27,7 +27,7 @@ describe 'has_many_with_deferred_save' do
       Room.find(@room.id).tables.should == [@table1] # not saved yet
       @room.table_ids.should == [@table1.id, @table2.id]
       @room.tables.should == [@table1, @table2]
-      @room.save.should be_true
+      @room.save.should be true
       Room.find(@room.id).tables.should == [@table1, @table2]
     end
 
@@ -35,7 +35,7 @@ describe 'has_many_with_deferred_save' do
     @room.table_ids.should == [@table1.id]
     @room.table_ids = [@table1.id, @table2.id]
     Room.find(@room.id).table_ids.should == [@table1.id] # not saved yet
-    @room.save.should be_true
+    @room.save.should be true
     Room.find(@room.id).table_ids.should == [@table1.id, @table2.id]
   end
 
@@ -44,7 +44,7 @@ describe 'has_many_with_deferred_save' do
       @room.table_ids = [@table1.id]
       @room.table_ids = [@table1.id, @table2.id]
       Room.find(@room.id).table_ids.should == [@table1.id] # not saved yet
-      @room.save.should be_true
+      @room.save.should be true
       Room.find(@room.id).table_ids.should == [@table1.id, @table2.id]
     end
 
@@ -52,11 +52,11 @@ describe 'has_many_with_deferred_save' do
     @room.tables.should == [@table1]
     @room.tables << @table2
     Room.find(@room.id).tables.should == [@table1] # not saved yet
-    @room.save.should be_true
+    @room.save.should be true
     Room.find(@room.id).tables.should == [@table1, @table2]
     @room.tables -= [@table1]
     Room.find(@room.id).tables.should == [@table1, @table2]
-    @room.save.should be_true
+    @room.save.should be true
     Room.find(@room.id).tables.should == [@table2]
   end
 
@@ -77,7 +77,7 @@ describe 'has_many_with_deferred_save' do
       # TODO these testcases need to be improved
       @room.chairs.should == [@chair1] # through table1
       @room.tables << @table2
-      @room.save.should be_true
+      @room.save.should be true
       @room.chairs.should == [@chair1] # association doesn't reload itself
       @room.reload
       @room.chairs.should == [@chair1, @chair2]

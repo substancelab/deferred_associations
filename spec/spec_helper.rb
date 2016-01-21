@@ -22,6 +22,9 @@ load(File.join(plugin_test_dir, "db", "schema.rb"))
 Dir["#{plugin_test_dir}/models/*.rb"].each {|file| require file }
 
 RSpec.configure do |config|
+
+  config.expect_with(:rspec) { |c| c.syntax = :should }
+
   config.before do
   end
 end
@@ -39,9 +42,9 @@ class ActiveRecord::Base
 end
 
 def ar2?
-  ActiveRecord::VERSION::STRING < "3"
+  ActiveRecord::VERSION::STRING < '3'
 end
 
 def ar4?
-  ActiveRecord::VERSION::STRING >= "4"
+  ActiveRecord::VERSION::STRING >= '4'
 end
