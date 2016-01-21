@@ -90,6 +90,11 @@ module ActiveRecord
             unless elements.nil? # nothing has been done with the association
               # save is done automatically, if original behaviour is restored
               instance_variable_set "@hmwds_#{collection_name}_save_in_progress", true
+              puts self.inspect
+              puts collection_name
+              puts "#{collection_name}_without_deferred_save="
+              puts elements.inspect
+              puts "===="
               self.send("#{collection_name}_without_deferred_save=", elements)
               instance_variable_set "@hmwds_#{collection_name}_save_in_progress", false
 

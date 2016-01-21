@@ -106,7 +106,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @people[2].rooms.size.should == 1
 
       @room.reload.people.size.should == 2
-      @people[2].valid?.should be_false
+      @people[2].valid?.should be false
       @people[2].get_error(:rooms).should == "This room has reached its maximum occupancy"
       @room.reload.people.size.should == 2
     end
@@ -146,12 +146,12 @@ describe "has_and_belongs_to_many_with_deferred_save" do
 
       @room.people.size.should == 2
       @room.people = [@room.people[0]]
-      @room.save.should be_true
+      @room.save.should be true
 
-      @room.bs_diff_before_module.should be_true
-      @room.bs_diff_after_module.should  be_true
+      @room.bs_diff_before_module.should be true
+      @room.bs_diff_after_module.should  be true
       if ar2?
-        @room.bs_diff_method.should      be_true
+        @room.bs_diff_method.should      be true
       else
         @room.bs_diff_method.should      be_nil # Rails 3.2: nil (before_save filter is not supported)
       end
@@ -169,7 +169,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.person_ids << @people[1].id
       @room.person_ids.should == [@people[0].id]
       Room.find(@room.id).person_ids.should == [@people[0].id]
-      @room.save.should be_true
+      @room.save.should be true
       Room.find(@room.id).person_ids.should == [@people[0].id] # ID array manipulation is ignored, too
     end
 
@@ -182,7 +182,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       @room.person_ids = [@people[1].id]
       @room.person_ids.should == [@people[1].id]
       Room.find(@room.id).person_ids.should == [@people[0].id,@people[1].id]
-      @room.save.should be_true
+      @room.save.should be true
       Room.find(@room.id).person_ids.should == [@people[1].id]
     end
 
@@ -237,8 +237,8 @@ describe "has_and_belongs_to_many_with_deferred_save" do
 
     it "the association has an include? method" do
       @door.rooms << @rooms[0]
-      @door.rooms.include?(@rooms[0]).should be_true
-      @door.rooms.include?(@rooms[1]).should be_false
+      @door.rooms.include?(@rooms[0]).should be true
+      @door.rooms.include?(@rooms[1]).should be false
     end
   end
 end
