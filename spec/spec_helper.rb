@@ -23,7 +23,7 @@ Dir["#{plugin_test_dir}/models/*.rb"].each {|file| require file }
 
 RSpec.configure do |config|
 
-  config.expect_with(:rspec) { |c| c.syntax = :should }
+  config.raise_errors_for_deprecations!
 
   config.before do
   end
