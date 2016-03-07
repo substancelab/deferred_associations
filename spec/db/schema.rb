@@ -2,39 +2,37 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 1) do
-
-  create_table "people", :force => true do |t|
-    t.column "name", :string
+ActiveRecord::Schema.define(version: 1) do
+  create_table 'people', force: true do |t|
+    t.column 'name', :string
   end
 
-  create_table "people_rooms", :id => false, :force => true do |t|
-    t.column "person_id", :integer
-    t.column "room_id",   :integer
+  create_table 'people_rooms', id: false, force: true do |t|
+    t.column 'person_id', :integer
+    t.column 'room_id',   :integer
   end
 
-  create_table "rooms", :force => true do |t|
-    t.column "name",              :string
-    t.column "maximum_occupancy", :integer
+  create_table 'rooms', force: true do |t|
+    t.column 'name',              :string
+    t.column 'maximum_occupancy', :integer
   end
 
-  create_table "doors_rooms", :id => false, :force => true do |t|
-    t.column "door_id",   :integer
-    t.column "room_id",   :integer
+  create_table 'doors_rooms', id: false, force: true do |t|
+    t.column 'door_id',   :integer
+    t.column 'room_id',   :integer
   end
 
-  create_table "doors", :force => true do |t|
-    t.column "name",              :string
+  create_table 'doors', force: true do |t|
+    t.column 'name', :string
   end
 
-  create_table "tables", :force => true do |t|
-    t.column "name", :string
-    t.column "room_id", :integer
+  create_table 'tables', force: true do |t|
+    t.column 'name', :string
+    t.column 'room_id', :integer
   end
 
-  create_table "chairs", :force => true do |t|
-    t.column "name", :string
-    t.column "table_id", :integer
+  create_table 'chairs', force: true do |t|
+    t.column 'name', :string
+    t.column 'table_id', :integer
   end
-
 end

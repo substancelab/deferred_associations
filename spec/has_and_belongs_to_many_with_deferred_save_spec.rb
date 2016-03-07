@@ -1,21 +1,21 @@
-require "spec_helper"
+require 'spec_helper'
 require 'has_and_belongs_to_many_with_deferred_save'
 
-describe "has_and_belongs_to_many_with_deferred_save" do
-  describe "room maximum_occupancy" do
+describe 'has_and_belongs_to_many_with_deferred_save' do
+  describe 'room maximum_occupancy' do
     before :all do
       @people = []
-      @people << Person.create(:name => 'Filbert')
-      @people << Person.create(:name => 'Miguel')
-      @people << Person.create(:name => 'Rainer')
-      @room = Room.new(:maximum_occupancy => 2)
+      @people << Person.create(name: 'Filbert')
+      @people << Person.create(name: 'Miguel')
+      @people << Person.create(name: 'Rainer')
+      @room = Room.new(maximum_occupancy: 2)
     end
     after :all do
       Person.delete_all
       Room.delete_all
     end
 
-    it "passes initial checks" do
+    it 'passes initial checks' do
       expect(Room  .count).to eq(0)
       expect(Person.count).to eq(3)
 
@@ -26,59 +26,59 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       )
     end
 
-    it "after adding people to room, it should not have saved anything to the database" do
+    it 'after adding people to room, it should not have saved anything to the database' do
       @room.people << @people[0]
       @room.people << @people[1]
 
       # Still not saved to the association table!
-      expect(Room.count_by_sql("select count(*) from people_rooms")).to eq(0)
+      expect(Room.count_by_sql('select count(*) from people_rooms')).to eq(0)
       expect(@room.people_without_deferred_save.size).               to eq(0)
     end
 
-    it "but room.people.size should still report the current size of 2" do
-      expect(@room.people.size).to eq(2)        # 2 because this looks at unsaved_people and not at the database
+    it 'but room.people.size should still report the current size of 2' do
+      expect(@room.people.size).to eq(2) # 2 because this looks at unsaved_people and not at the database
     end
 
-    it "after saving the model, the association should be saved in the join table" do
-      @room.save    # Only here is it actually saved to the association table!
+    it 'after saving the model, the association should be saved in the join table' do
+      @room.save # Only here is it actually saved to the association table!
       expect(@room.errors.full_messages).to eq([])
-      expect(Room.count_by_sql("select count(*) from people_rooms")).to eq(2)
+      expect(Room.count_by_sql('select count(*) from people_rooms')).to eq(2)
       expect(@room.people.size).                                     to eq(2)
       expect(@room.people_without_deferred_save.size).               to eq(2)
     end
 
-    it "when we try to add a 3rd person, it should add a validation error to the errors object like any other validation error" do
+    it 'when we try to add a 3rd person, it should add a validation error to the errors object like any other validation error' do
       expect { @room.people << @people[2] }.not_to raise_error
       expect(@room.people.size).       to eq(3)
 
-      expect(Room.count_by_sql("select count(*) from people_rooms")).to eq(2)
+      expect(Room.count_by_sql('select count(*) from people_rooms')).to eq(2)
       @room.valid?
-      expect(@room.get_error(:people)).to eq("This room has reached its maximum occupancy")
+      expect(@room.get_error(:people)).to eq('This room has reached its maximum occupancy')
       expect(@room.people.size).       to eq(3) # Just like with normal attributes that fail validation... the attribute still contains the invalid data but we refuse to save until it is changed to something that is *valid*.
     end
 
-    it "when we try to save, it should fail, because room.people is still invalid" do
+    it 'when we try to save, it should fail, because room.people is still invalid' do
       expect(@room.save).to eq(false)
-      expect(Room.count_by_sql("select count(*) from people_rooms")).to eq(2) # It's still not there, because it didn't pass the validation.
-      expect(@room.get_error(:people)).to eq("This room has reached its maximum occupancy")
+      expect(Room.count_by_sql('select count(*) from people_rooms')).to eq(2) # It's still not there, because it didn't pass the validation.
+      expect(@room.get_error(:people)).to eq('This room has reached its maximum occupancy')
       expect(@room.people.size).       to eq(3)
-      expect(@people.map {|p| p.reload; p.rooms.size}).to eq([1, 1, 0])
+      expect(@people.map { |p| p.reload; p.rooms.size }).to eq([1, 1, 0])
     end
 
-    it "when we reload, it should go back to only having 2 people in the room" do
+    it 'when we reload, it should go back to only having 2 people in the room' do
       @room.reload
       expect(@room.people.size).                                     to eq(2)
       expect(@room.people_without_deferred_save.size).               to eq(2)
-      expect(@people.map {|p| p.reload; p.rooms.size}).              to eq([1, 1, 0])
+      expect(@people.map { |p| p.reload; p.rooms.size }). to eq([1, 1, 0])
     end
 
-    it "if they try to go around our accessors and use the original accessors, then (and only then) will the exception be raised in before_adding_person..." do
+    it 'if they try to go around our accessors and use the original accessors, then (and only then) will the exception be raised in before_adding_person...' do
       expect do
         @room.people_without_deferred_save << @people[2]
       end.to raise_error(RuntimeError)
     end
 
-    it "lets you bypass the validation on Room if we add the association from the other side (person.rooms <<)?" do
+    it 'lets you bypass the validation on Room if we add the association from the other side (person.rooms <<)?' do
       @people[2].rooms << @room
       expect(@people[2].rooms.size).to eq(1)
 
@@ -93,7 +93,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       expect(@room.valid?).to eq(false)
     end
 
-    it "only if you add the validation to both sides, can you ensure that the size of the association does not exceed some limit" do
+    it 'only if you add the validation to both sides, can you ensure that the size of the association does not exceed some limit' do
       expect(@room.reload.people.size).to eq(3)
       @room.people.delete(@people[2])
       expect(@room.save).to eq(true)
@@ -108,24 +108,24 @@ describe "has_and_belongs_to_many_with_deferred_save" do
 
       expect(@room.reload.people.size).to eq(2)
       expect(@people[2].valid?).to be false
-      expect(@people[2].get_error(:rooms)).to eq("This room has reached its maximum occupancy")
+      expect(@people[2].get_error(:rooms)).to eq('This room has reached its maximum occupancy')
       expect(@room.reload.people.size).to eq(2)
     end
 
-    it "still lets you do find" do
+    it 'still lets you do find' do
       if ar4?
-        expect(@room.people2.where(:name => 'Filbert').first).to eq(@people[0])
-        expect(@room.people_without_deferred_save.where(:name => 'Filbert').first).to eq(@people[0])
-        expect(@room.people.where(:name => 'Filbert').first).to eq(@people[0])
+        expect(@room.people2.where(name: 'Filbert').first).to eq(@people[0])
+        expect(@room.people_without_deferred_save.where(name: 'Filbert').first).to eq(@people[0])
+        expect(@room.people.where(name: 'Filbert').first).to eq(@people[0])
       else
-        expect(@room.people2.                     find(:first, :conditions => {:name => 'Filbert'})).to eq(@people[0])
-        expect(@room.people_without_deferred_save.find(:first, :conditions => {:name => 'Filbert'})).to eq(@people[0])
-        expect(@room.people2.first(:conditions                      => {:name => 'Filbert'})).to eq(@people[0])
-        expect(@room.people_without_deferred_save.first(:conditions => {:name => 'Filbert'})).to eq(@people[0])
+        expect(@room.people2.                     find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
+        expect(@room.people_without_deferred_save.find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
+        expect(@room.people2.first(conditions: { name: 'Filbert' })).to eq(@people[0])
+        expect(@room.people_without_deferred_save.first(conditions: { name: 'Filbert' })).to eq(@people[0])
 
-        expect(@room.people.find(:first, :conditions => {:name => 'Filbert'})).to eq(@people[0])
-        expect(@room.people.first(:conditions => {:name => 'Filbert'})).       to eq(@people[0])
-        expect(@room.people.last(:conditions => {:name => 'Filbert'})).        to eq(@people[0])
+        expect(@room.people.find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
+        expect(@room.people.first(conditions: { name: 'Filbert' })).       to eq(@people[0])
+        expect(@room.people.last(conditions: { name: 'Filbert' })).        to eq(@people[0])
       end
 
       expect(@room.people.first).                                        to eq(@people[0])
@@ -134,12 +134,12 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       expect(@room.people_without_deferred_save.find_by_name('Filbert')).to eq(@people[0])
     end
 
-    it "should be dumpable with Marshal" do
+    it 'should be dumpable with Marshal' do
       expect { Marshal.dump(@room.people) }.not_to raise_exception
       expect { Marshal.dump(Room.new.people) }.not_to raise_exception
     end
 
-    it "should detect difference in association" do
+    it 'should detect difference in association' do
       @room = Room.find(@room.id)
       expect(@room.bs_diff_before_module).to be_nil
       expect(@room.bs_diff_after_module).to  be_nil
@@ -158,7 +158,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       end
     end
 
-    it "should act like original habtm when using ID array with array manipulation" do
+    it 'should act like original habtm when using ID array with array manipulation' do
       @room = Room.find(@room.id)
       @room.people = [@people[0]]
       @room.save
@@ -174,7 +174,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       expect(Room.find(@room.id).person_ids).to eq([@people[0].id]) # ID array manipulation is ignored, too
     end
 
-    it "should work with id setters" do
+    it 'should work with id setters' do
       @room = Room.find(@room.id)
       @room.people = [@people[0], @people[1]]
       @room.save
@@ -182,12 +182,12 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       expect(@room.person_ids).to eq([@people[0].id, @people[1].id])
       @room.person_ids = [@people[1].id]
       expect(@room.person_ids).to eq([@people[1].id])
-      expect(Room.find(@room.id).person_ids).to eq([@people[0].id,@people[1].id])
+      expect(Room.find(@room.id).person_ids).to eq([@people[0].id, @people[1].id])
       expect(@room.save).to be true
       expect(Room.find(@room.id).person_ids).to eq([@people[1].id])
     end
 
-    it "should work with multiple id setters and object setters" do
+    it 'should work with multiple id setters and object setters' do
       @room = Room.find(@room.id)
       @room.people     = [@people[0]]
       @room.person_ids = [@people[0].id, @people[1].id]
@@ -199,36 +199,32 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       expect(@room.people).to eq([@people[1]])
     end
 
-    it "should give klass in AR 3/4" do
-      unless ar2?
-        expect(@room.people.klass).to eq(Person)
-      end
+    it 'should give klass in AR 3/4' do
+      expect(@room.people.klass).to eq(Person) unless ar2?
     end
 
-    it "should give aliased_table_name in AR 2.3" do
-      if ar2?
-        expect(@room.people.aliased_table_name).to eq("people")
-      end
+    it 'should give aliased_table_name in AR 2.3' do
+      expect(@room.people.aliased_table_name).to eq('people') if ar2?
     end
 
-    it "should support reload both with and without params" do
+    it 'should support reload both with and without params' do
       # find options are deprecated with AR 4, but reload still
       # supports them
       expect(@room.reload.id).to eq(@room.id)
-      with_param = @room.reload(:select => 'id')
+      with_param = @room.reload(select: 'id')
       expect(with_param.id).to eq(@room.id)
     end
   end
 
-  describe "doors" do
+  describe 'doors' do
     before :all do
       @rooms = []
-      @rooms << Room.create(:name => 'Kitchen',     :maximum_occupancy => 1)
-      @rooms << Room.create(:name => 'Dining room', :maximum_occupancy => 10)
-      @door =   Door.new(:name => 'Kitchen-Dining-room door')
+      @rooms << Room.create(name: 'Kitchen',     maximum_occupancy: 1)
+      @rooms << Room.create(name: 'Dining room', maximum_occupancy: 10)
+      @door =   Door.new(name: 'Kitchen-Dining-room door')
     end
 
-    it "passes initial checks" do
+    it 'passes initial checks' do
       expect(Room.count).to eq(2)
       expect(Door.count).to eq(0)
 
@@ -236,7 +232,7 @@ describe "has_and_belongs_to_many_with_deferred_save" do
       expect(@door.rooms_without_deferred_save).to eq([])
     end
 
-    it "the association has an include? method" do
+    it 'the association has an include? method' do
       @door.rooms << @rooms[0]
       expect(@door.rooms.include?(@rooms[0])).to be true
       expect(@door.rooms.include?(@rooms[1])).to be false

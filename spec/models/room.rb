@@ -6,12 +6,12 @@ class Room < ActiveRecord::Base
 
   before_save :diff_before_module
 
-  has_and_belongs_to_many_with_deferred_save :people, :before_add => :before_adding_person
-  has_and_belongs_to_many :people2, :class_name => 'Person'
+  has_and_belongs_to_many_with_deferred_save :people, before_add: :before_adding_person
+  has_and_belongs_to_many :people2, class_name: 'Person'
   has_and_belongs_to_many_with_deferred_save :doors
 
   has_many_with_deferred_save :tables
-  has_many_with_deferred_save :chairs, :through => :tables #TODO test compatibility with through associations
+  has_many_with_deferred_save :chairs, through: :tables # TODO: test compatibility with through associations
 
   has_and_belongs_to_many_with_deferred_save :doors
   has_many_with_deferred_save :tables
@@ -21,21 +21,19 @@ class Room < ActiveRecord::Base
   validate :people_count
 
   def people_count
-    if people.size > maximum_occupancy
-      errors.add :people, "This room has reached its maximum occupancy"
-    end
+    errors.add :people, 'This room has reached its maximum occupancy' if people.size > maximum_occupancy
   end
 
   # Just in case they try to bypass our new accessor and call people_without_deferred_save directly...
   # (This should never be necessary; it is for demonstration purposes only...)
   def before_adding_person(person)
-    if self.people_without_deferred_save.size + [person].size > maximum_occupancy
-      raise "There are too many people in this room"
+    if people_without_deferred_save.size + [person].size > maximum_occupancy
+      raise 'There are too many people in this room'
     end
   end
 
   def diff_before_module
-    #should detect the changes
+    # should detect the changes
     self.bs_diff_before_module = (people.size - people_without_deferred_save.size) != 0
     true
   end
@@ -51,4 +49,5 @@ class Room < ActiveRecord::Base
     self.bs_diff_method = (people.size - people_without_deferred_save.size) != 0
     true
   end
+
 end

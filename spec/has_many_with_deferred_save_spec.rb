@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe 'has_many_with_deferred_save' do
-
   before :each do
-    @room    = Room.create(:maximum_occupancy => 2)
-    @table1  = Table.create(:room_id => @room.id)
+    @room    = Room.create(maximum_occupancy: 2)
+    @table1  = Table.create(room_id: @room.id)
     @table2  = Table.create
-    @chair1  = Chair.create(:table_id => @table1.id, :name => "First")
-    @chair2  = Chair.create(:table_id => @table2.id, :name => "Second")
+    @chair1  = Chair.create(table_id: @table1.id, name: 'First')
+    @chair2  = Chair.create(table_id: @table2.id, name: 'Second')
   end
 
   it 'should work with tables obj setter/getter' do
@@ -21,15 +20,15 @@ describe 'has_many_with_deferred_save' do
   end
 
   it 'should work with tables obj setter/getter, used twice' do
-      expect(@room.tables).to eq([@table1])
-      @room.tables = [@table1]
-      @room.tables = [@table1, @table2]
-      expect(Room.find(@room.id).tables).to eq([@table1]) # not saved yet
-      expect(@room.table_ids).to eq([@table1.id, @table2.id])
-      expect(@room.tables).to eq([@table1, @table2])
-      expect(@room.save).to be true
-      expect(Room.find(@room.id).tables).to eq([@table1, @table2])
-    end
+    expect(@room.tables).to eq([@table1])
+    @room.tables = [@table1]
+    @room.tables = [@table1, @table2]
+    expect(Room.find(@room.id).tables).to eq([@table1]) # not saved yet
+    expect(@room.table_ids).to eq([@table1.id, @table2.id])
+    expect(@room.tables).to eq([@table1, @table2])
+    expect(@room.save).to be true
+    expect(Room.find(@room.id).tables).to eq([@table1, @table2])
+  end
 
   it 'should work with tables id setter/getter' do
     expect(@room.table_ids).to eq([@table1.id])
@@ -40,13 +39,13 @@ describe 'has_many_with_deferred_save' do
   end
 
   it 'should work with tables id setter/getter, used twice' do
-      expect(@room.table_ids).to eq([@table1.id])
-      @room.table_ids = [@table1.id]
-      @room.table_ids = [@table1.id, @table2.id]
-      expect(Room.find(@room.id).table_ids).to eq([@table1.id]) # not saved yet
-      expect(@room.save).to be true
-      expect(Room.find(@room.id).table_ids).to eq([@table1.id, @table2.id])
-    end
+    expect(@room.table_ids).to eq([@table1.id])
+    @room.table_ids = [@table1.id]
+    @room.table_ids = [@table1.id, @table2.id]
+    expect(Room.find(@room.id).table_ids).to eq([@table1.id]) # not saved yet
+    expect(@room.save).to be true
+    expect(Room.find(@room.id).table_ids).to eq([@table1.id, @table2.id])
+  end
 
   it 'should work with array methods' do
     expect(@room.tables).to eq([@table1])
@@ -67,14 +66,14 @@ describe 'has_many_with_deferred_save' do
     expect(@room.tables).to eq([@table1])
   end
 
-  it "should be dumpable with Marshal" do
+  it 'should be dumpable with Marshal' do
     expect { Marshal.dump(@room.tables) }.not_to raise_exception
     expect { Marshal.dump(Room.new.tables) }.not_to raise_exception
   end
 
   describe 'with through option' do
     it 'should have a correct list' do
-      # TODO these testcases need to be improved
+      # TODO: these testcases need to be improved
       expect(@room.chairs).to eq([@chair1]) # through table1
       @room.tables << @table2
       expect(@room.save).to be true
@@ -86,17 +85,17 @@ describe 'has_many_with_deferred_save' do
     it 'should defer association methods' do
       expect(@room.chairs.first).to eq(@chair1)
       if ar4?
-        expect(@room.chairs.where(:name => "First")).to eq([@chair1])
+        expect(@room.chairs.where(name: 'First')).to eq([@chair1])
       else
-        expect(@room.chairs.find(:all, :conditions => {:name => "First"})).to eq([@chair1])
+        expect(@room.chairs.find(:all, conditions: { name: 'First' })).to eq([@chair1])
       end
 
-      expect {
-        @room.chairs.create(:name => "New one")
-      }.to raise_error(ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection)
+      expect do
+        @room.chairs.create(name: 'New one')
+      end.to raise_error(ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection)
     end
 
-    it "should be dumpable with Marshal" do
+    it 'should be dumpable with Marshal' do
       expect { Marshal.dump(@room.chairs) }.not_to raise_exception
       expect { Marshal.dump(Room.new.chairs) }.not_to raise_exception
     end
