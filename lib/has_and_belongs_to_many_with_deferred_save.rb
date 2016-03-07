@@ -17,7 +17,7 @@ module ActiveRecord
       #  end
       def has_and_belongs_to_many_with_deferred_save(*args)
         collection_name = args[0].to_s
-        collection_singular_ids = collection_name.singularize + "_ids"
+        collection_singular_ids = collection_name.singularize + '_ids'
 
         return if method_defined?("#{collection_name}_with_deferred_save")
 
@@ -33,12 +33,12 @@ module ActiveRecord
           self.send "unsaved_#{collection_name}=", collection
         end
 
-        define_method "#{collection_name}_with_deferred_save" do |*args|
+        define_method "#{collection_name}_with_deferred_save" do |*method_args|
           if self.send("use_original_collection_reader_behavior_for_#{collection_name}")
             self.send("#{collection_name}_without_deferred_save")
           else
             if self.send("unsaved_#{collection_name}").nil?
-              send("initialize_unsaved_#{collection_name}", *args)
+              send("initialize_unsaved_#{collection_name}", *method_args)
             end
             self.send("unsaved_#{collection_name}")
           end
@@ -47,12 +47,12 @@ module ActiveRecord
         alias_method_chain :"#{collection_name}=", 'deferred_save'
         alias_method_chain :"#{collection_name}", 'deferred_save'
 
-        define_method "#{collection_singular_ids}_with_deferred_save" do |*args|
+        define_method "#{collection_singular_ids}_with_deferred_save" do |*method_args|
           if self.send("use_original_collection_reader_behavior_for_#{collection_name}")
             self.send("#{collection_singular_ids}_without_deferred_save")
           else
             if self.send("unsaved_#{collection_name}").nil?
-              send("initialize_unsaved_#{collection_name}", *args)
+              send("initialize_unsaved_#{collection_name}", *method_args)
             end
             self.send("unsaved_#{collection_name}").map { |e| e[:id] }
           end
@@ -61,7 +61,7 @@ module ActiveRecord
         alias_method_chain :"#{collection_singular_ids}", 'deferred_save'
 
         # only needed for ActiveRecord >= 3.0
-        if ActiveRecord::VERSION::STRING >= "3"
+        if ActiveRecord::VERSION::STRING >= '3'
           define_method "#{collection_singular_ids}_with_deferred_save=" do |ids|
             ids = Array.wrap(ids).reject { |id| id.blank? }
             reflection_wrapper = self.send("#{collection_name}_without_deferred_save")
@@ -95,9 +95,9 @@ module ActiveRecord
         after_save "do_#{collection_name}_save!"
 
 
-        define_method "reload_with_deferred_save_for_#{collection_name}" do |*args|
+        define_method "reload_with_deferred_save_for_#{collection_name}" do |*method_args|
           # Reload from the *database*, discarding any unsaved changes.
-          self.send("reload_without_deferred_save_for_#{collection_name}", *args).tap do
+          self.send("reload_without_deferred_save_for_#{collection_name}", *method_args).tap do
             self.send "unsaved_#{collection_name}=", nil
               # /\ If we didn't do this, then when we called reload, it would still have the same (possibly invalid) value of
               # unsaved_collection that it had before the reload.
@@ -106,9 +106,9 @@ module ActiveRecord
         alias_method_chain :reload, "deferred_save_for_#{collection_name}"
 
 
-        define_method "initialize_unsaved_#{collection_name}" do |*args|
+        define_method "initialize_unsaved_#{collection_name}" do |*method_args|
           #puts "Initialized to #{self.send("#{collection_name}_without_deferred_save").clone.inspect}"
-          elements = self.send("#{collection_name}_without_deferred_save", *args).clone
+          elements = self.send("#{collection_name}_without_deferred_save", *method_args).clone
           elements = ArrayToAssociationWrapper.new(elements)
           elements.defer_association_methods_to self, collection_name
           self.send "unsaved_#{collection_name}=", elements
@@ -130,14 +130,14 @@ module ActiveRecord
       def add_deletion_callback
         # this will delete all the association into the join table after obj.destroy,
         # but is only useful/necessary, if the record is not paranoid?
-        unless (self.respond_to?(:paranoid?) && self.paranoid?)
-          after_destroy { |record|
+        unless self.respond_to?(:paranoid?) && self.paranoid?
+          after_destroy do |record|
             begin
               record.save
             rescue Exception => e
               logger.warn "Association cleanup after destroy failed with #{e}"
             end
-          }
+          end
         end
       end
     end

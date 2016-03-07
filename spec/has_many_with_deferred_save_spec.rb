@@ -11,94 +11,94 @@ describe 'has_many_with_deferred_save' do
   end
 
   it 'should work with tables obj setter/getter' do
-    @room.tables.should == [@table1]
+    expect(@room.tables).to eq [@table1]
     @room.tables = [@table1, @table2]
-    Room.find(@room.id).tables.should == [@table1] # not saved yet
-    @room.tables.should == [@table1, @table2]
-    @room.table_ids.should == [@table1.id, @table2.id]
-    @room.save.should be true
-    Room.find(@room.id).tables.should == [@table1, @table2]
+    expect(Room.find(@room.id).tables).to eq([@table1]) # not saved yet
+    expect(@room.tables).to eq([@table1, @table2])
+    expect(@room.table_ids).to eq([@table1.id, @table2.id])
+    expect(@room.save).to be true
+    expect(Room.find(@room.id).tables).to eq([@table1, @table2])
   end
 
   it 'should work with tables obj setter/getter, used twice' do
-      @room.tables.should == [@table1]
+      expect(@room.tables).to eq([@table1])
       @room.tables = [@table1]
       @room.tables = [@table1, @table2]
-      Room.find(@room.id).tables.should == [@table1] # not saved yet
-      @room.table_ids.should == [@table1.id, @table2.id]
-      @room.tables.should == [@table1, @table2]
-      @room.save.should be true
-      Room.find(@room.id).tables.should == [@table1, @table2]
+      expect(Room.find(@room.id).tables).to eq([@table1]) # not saved yet
+      expect(@room.table_ids).to eq([@table1.id, @table2.id])
+      expect(@room.tables).to eq([@table1, @table2])
+      expect(@room.save).to be true
+      expect(Room.find(@room.id).tables).to eq([@table1, @table2])
     end
 
   it 'should work with tables id setter/getter' do
-    @room.table_ids.should == [@table1.id]
+    expect(@room.table_ids).to eq([@table1.id])
     @room.table_ids = [@table1.id, @table2.id]
-    Room.find(@room.id).table_ids.should == [@table1.id] # not saved yet
-    @room.save.should be true
-    Room.find(@room.id).table_ids.should == [@table1.id, @table2.id]
+    expect(Room.find(@room.id).table_ids).to eq([@table1.id]) # not saved yet
+    expect(@room.save).to be true
+    expect(Room.find(@room.id).table_ids).to eq([@table1.id, @table2.id])
   end
 
   it 'should work with tables id setter/getter, used twice' do
-      @room.table_ids.should == [@table1.id]
+      expect(@room.table_ids).to eq([@table1.id])
       @room.table_ids = [@table1.id]
       @room.table_ids = [@table1.id, @table2.id]
-      Room.find(@room.id).table_ids.should == [@table1.id] # not saved yet
-      @room.save.should be true
-      Room.find(@room.id).table_ids.should == [@table1.id, @table2.id]
+      expect(Room.find(@room.id).table_ids).to eq([@table1.id]) # not saved yet
+      expect(@room.save).to be true
+      expect(Room.find(@room.id).table_ids).to eq([@table1.id, @table2.id])
     end
 
   it 'should work with array methods' do
-    @room.tables.should == [@table1]
+    expect(@room.tables).to eq([@table1])
     @room.tables << @table2
-    Room.find(@room.id).tables.should == [@table1] # not saved yet
-    @room.save.should be true
-    Room.find(@room.id).tables.should == [@table1, @table2]
+    expect(Room.find(@room.id).tables).to eq([@table1]) # not saved yet
+    expect(@room.save).to be true
+    expect(Room.find(@room.id).tables).to eq([@table1, @table2])
     @room.tables -= [@table1]
-    Room.find(@room.id).tables.should == [@table1, @table2]
-    @room.save.should be true
-    Room.find(@room.id).tables.should == [@table2]
+    expect(Room.find(@room.id).tables).to eq([@table1, @table2])
+    expect(@room.save).to be true
+    expect(Room.find(@room.id).tables).to eq([@table2])
   end
 
   it 'should reload temporary objects' do
     @room.tables << @table2
-    @room.tables.should == [@table1, @table2]
+    expect(@room.tables).to eq([@table1, @table2])
     @room.reload
-    @room.tables.should == [@table1]
+    expect(@room.tables).to eq([@table1])
   end
 
   it "should be dumpable with Marshal" do
-    lambda { Marshal.dump(@room.tables) }.should_not raise_exception
-    lambda { Marshal.dump(Room.new.tables) }.should_not raise_exception
+    expect { Marshal.dump(@room.tables) }.not_to raise_exception
+    expect { Marshal.dump(Room.new.tables) }.not_to raise_exception
   end
 
   describe 'with through option' do
     it 'should have a correct list' do
       # TODO these testcases need to be improved
-      @room.chairs.should == [@chair1] # through table1
+      expect(@room.chairs).to eq([@chair1]) # through table1
       @room.tables << @table2
-      @room.save.should be true
-      @room.chairs.should == [@chair1] # association doesn't reload itself
+      expect(@room.save).to be true
+      expect(@room.chairs).to eq([@chair1]) # association doesn't reload itself
       @room.reload
-      @room.chairs.should == [@chair1, @chair2]
+      expect(@room.chairs).to eq([@chair1, @chair2])
     end
 
     it 'should defer association methods' do
-      @room.chairs.first.should == @chair1
+      expect(@room.chairs.first).to eq(@chair1)
       if ar4?
-        @room.chairs.where(:name => "First").should == [@chair1]
+        expect(@room.chairs.where(:name => "First")).to eq([@chair1])
       else
-        @room.chairs.find(:all, :conditions => {:name => "First"}).should == [@chair1]
+        expect(@room.chairs.find(:all, :conditions => {:name => "First"})).to eq([@chair1])
       end
 
-      lambda {
+      expect {
         @room.chairs.create(:name => "New one")
-      }.should raise_error(ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection)
+      }.to raise_error(ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection)
     end
 
     it "should be dumpable with Marshal" do
-      lambda { Marshal.dump(@room.chairs) }.should_not raise_exception
-      lambda { Marshal.dump(Room.new.chairs) }.should_not raise_exception
+      expect { Marshal.dump(@room.chairs) }.not_to raise_exception
+      expect { Marshal.dump(Room.new.chairs) }.not_to raise_exception
     end
   end
 end
