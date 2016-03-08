@@ -98,8 +98,9 @@ module ActiveRecord
         alias_method_chain :reload, "deferred_save_for_#{collection_name}"
 
         define_method "initialize_unsaved_#{collection_name}" do |*method_args|
-          # puts "Initialized to #{self.send("#{collection_name}_without_deferred_save").clone.inspect}"
           elements = send("#{collection_name}_without_deferred_save", *method_args)
+
+          # here the association will be duped, so changes to "unsaved_#{collection_name}" will not be saved immediately
           elements = ArrayToAssociationWrapper.new(elements)
           elements.defer_association_methods_to self, collection_name
           send "unsaved_#{collection_name}=", elements
