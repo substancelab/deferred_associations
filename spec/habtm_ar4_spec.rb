@@ -4,7 +4,7 @@ require 'has_and_belongs_to_many_with_deferred_save'
 if ar4?
   describe 'ActiveRecord4 specials' do
     before :all do
-      ActiveRecord::Base.logger = Logger.new(STDOUT)
+      #ActiveRecord::Base.logger = Logger.new(STDOUT) # uncomment for debugging statements
       @people = []
       @people << Person.create(name: 'Filbert')
       @people << Person.create(name: 'Miguel')

@@ -1,3 +1,7 @@
+0.5.8
+=====
+* fix preloading of HABTM associations in ActiveRecord >= 4.0
+
 0.5.7
 =====
 * fix a problem, when model is loaded multiple times
