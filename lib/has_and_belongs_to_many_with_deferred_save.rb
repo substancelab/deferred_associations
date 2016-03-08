@@ -99,17 +99,10 @@ module ActiveRecord
 
         define_method "initialize_unsaved_#{collection_name}" do |*method_args|
           # puts "Initialized to #{self.send("#{collection_name}_without_deferred_save").clone.inspect}"
-          elements = send("#{collection_name}_without_deferred_save", *method_args).clone
+          elements = send("#{collection_name}_without_deferred_save", *method_args)
           elements = ArrayToAssociationWrapper.new(elements)
           elements.defer_association_methods_to self, collection_name
           send "unsaved_#{collection_name}=", elements
-          # /\ We initialize it to collection_without_deferred_save in case they just loaded the object from the
-          # database, in which case we want unsaved_collection to start out with the "saved collection".
-          # Actually, this doesn't clone the Association but the elements array instead (since the clone method is
-          # proxied like any other methods)
-          # Important: If we don't use clone, then it does an assignment by reference and any changes to unsaved_collection
-          # will also change *collection_without_deferred_save*! (Not what we want! Would result in us saving things
-          # immediately, which is exactly what we're trying to avoid.)
         end
         private :"initialize_unsaved_#{collection_name}"
       end

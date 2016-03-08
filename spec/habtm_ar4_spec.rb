@@ -9,11 +9,9 @@ if ar4?
       @people << Person.create(name: 'Filbert')
       @people << Person.create(name: 'Miguel')
       @people << Person.create(name: 'Rainer')
-      @room1 = Room.new(maximum_occupancy: 2, people: @people[1..2])
-      @room1.save!
-      @room2 = Room.new(maximum_occupancy: 2, people: @people[0..1])
-      @room2.save!
-      @room3 = Room.create maximum_occupancy: 2
+      @room1 = Room.create! maximum_occupancy: 2, people: @people[1..2]
+      @room2 = Room.create! maximum_occupancy: 2, people: @people[0..1]
+      @room3 = Room.create! maximum_occupancy: 2
     end
 
     after :all do
@@ -26,7 +24,7 @@ if ar4?
       it 'should not preload, if option is not specified' do
         rooms = Room.where(id: [@room1.id, @room2.id, @room3.id])
         rooms = rooms.to_a # execute original query
-        room1 = rooms.first # execute original query
+        room1 = rooms.first
         room2 = rooms.second
         room3 = rooms.third
 
@@ -67,8 +65,8 @@ if ar4?
 
       it 'should preload with non-deferred association' do
         rooms = Room.where(id: [@room1.id, @room2.id, @room3.id]).preload(:people2)
-        rooms = rooms.to_a
-        room1 = rooms.first # execute original query, together with preloading the association
+        rooms = rooms.to_a # execute original query, together with preloading the association
+        room1 = rooms.first
         room2 = rooms.second
         room3 = rooms.third
         # association is autoloaded
