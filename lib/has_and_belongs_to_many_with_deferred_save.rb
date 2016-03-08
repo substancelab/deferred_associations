@@ -108,7 +108,7 @@ module ActiveRecord
 
         define_method "initialize_unsaved_#{collection_name}" do |*args|
           #puts "Initialized to #{self.send("#{collection_name}_without_deferred_save").clone.inspect}"
-          elements = self.send("#{collection_name}_without_deferred_save", *args).clone
+          elements = self.send("#{collection_name}_without_deferred_save", *args) # # FIXME martin.koerner 08.03.16 is the .clone needed for AR 2.3? IN AR 3/4 it also works without...
           elements = ArrayToAssociationWrapper.new(elements)
           elements.defer_association_methods_to self, collection_name
           self.send "unsaved_#{collection_name}=", elements
