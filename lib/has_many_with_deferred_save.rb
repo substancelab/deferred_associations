@@ -3,6 +3,7 @@ module ActiveRecord
     module ClassMethods
       def has_many_with_deferred_save(*args)
         collection_name = args[0].to_s
+        collection_singular_ids = "#{collection_name.singularize}_ids"
 
         return if method_defined?("#{collection_name}_with_deferred_save")
 
@@ -14,18 +15,19 @@ module ActiveRecord
 
         after_save "hmwds_update_#{collection_name}"
 
-        define_obj_setter    collection_name
+        define_obj_setter    collection_name, collection_singular_ids
         define_obj_getter    collection_name
-        define_id_setter     collection_name
-        define_id_getter     collection_name
+        define_id_setter     collection_name, collection_singular_ids
+        define_id_getter     collection_name, collection_singular_ids
 
         define_update_method collection_name
         define_reload_method collection_name
       end
 
-      def define_obj_setter(collection_name)
+      def define_obj_setter(collection_name, collection_singular_ids)
         define_method("#{collection_name}_with_deferred_save=") do |objs|
           instance_variable_set "@hmwds_temp_#{collection_name}", objs || []
+          attribute_will_change!(collection_singular_ids)
         end
 
         method_name = "#{collection_name}="
@@ -56,10 +58,9 @@ module ActiveRecord
         alias_method_chain collection_name, :deferred_save
       end
 
-      def define_id_setter(collection_name)
+      def define_id_setter(collection_name, collection_singular_ids)
         # only needed for ActiveRecord >= 3.0
         if ActiveRecord::VERSION::STRING >= '3'
-          collection_singular_ids = "#{collection_name.singularize}_ids"
           define_method "#{collection_singular_ids}_with_deferred_save=" do |ids|
             ids = Array.wrap(ids).reject(&:blank?)
             new_values = send("#{collection_name}_without_deferred_save").klass.find(ids)
@@ -69,8 +70,7 @@ module ActiveRecord
         end
       end
 
-      def define_id_getter(collection_name)
-        collection_singular_ids = "#{collection_name.singularize}_ids"
+      def define_id_getter(collection_name, collection_singular_ids)
         define_method "#{collection_singular_ids}_with_deferred_save" do
           send(collection_name).map { |e| e[:id] }
         end

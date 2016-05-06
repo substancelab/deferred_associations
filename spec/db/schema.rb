@@ -35,4 +35,9 @@ ActiveRecord::Schema.define(version: 1) do
     t.column 'name', :string
     t.column 'table_id', :integer
   end
+
+  create_table 'windows', force: true do |t|
+    t.column 'name', :string
+    t.column 'room_id', :integer
+  end
 end

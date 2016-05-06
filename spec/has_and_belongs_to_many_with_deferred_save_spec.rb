@@ -238,4 +238,23 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
       expect(@door.rooms.include?(@rooms[1])).to be false
     end
   end
+
+  describe 'tables' do
+    before :all do
+      @table1 = Table.create(name: 'Table1', room_id: Room.create(name: 'Kitchen').id)
+      @table2 = Table.create(name: 'Table2', room_id: Room.create(name: 'Dining room').id)
+      @doors = [Door.create(name: 'Door1'), Door.create(name: 'Door2')]
+    end
+
+    it 'saves doors of associated room, if table gets saved' do
+      @table1.room_with_autosave.doors = @doors
+      @table2.room_with_autosave.door_ids = [@doors.first.id]
+      expect(@table1.room_with_autosave).to be_changed
+      expect(@table2.room_with_autosave).to be_changed
+      @table1.save!
+      @table2.save!
+      expect(@table1.room.doors).to eq @doors
+      expect(@table2.room.doors).to eq [@doors.first]
+    end
+  end
 end

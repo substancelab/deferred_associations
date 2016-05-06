@@ -30,6 +30,7 @@ module ActiveRecord
         define_method "#{collection_name}_with_deferred_save=" do |collection|
           # puts "has_and_belongs_to_many_with_deferred_save: #{collection_name} = #{collection.collect(&:id).join(',')}"
           send "unsaved_#{collection_name}=", collection
+          attribute_will_change!(collection_singular_ids)
         end
 
         define_method "#{collection_name}_with_deferred_save" do |*method_args|

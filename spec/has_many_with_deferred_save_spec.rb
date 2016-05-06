@@ -100,4 +100,23 @@ describe 'has_many_with_deferred_save' do
       expect { Marshal.dump(Room.new.chairs) }.not_to raise_exception
     end
   end
+
+  describe 'with autosave option' do
+    before :all do
+      @table3 = Table.create(name: 'Table3', room_id: Room.create(name: 'Kitchen').id)
+      @table4 = Table.create(name: 'Table4', room_id: Room.create(name: 'Dining room').id)
+      @windows = [Window.create(name: 'South'), Window.create(name: 'West'), Window.create(name: 'East')]
+    end
+
+    it 'saves windows of associated room, if table gets saved' do
+      @table3.room_with_autosave.windows = [@windows.first, @windows.second]
+      @table4.room_with_autosave.window_ids = [@windows.third.id]
+      expect(@table3.room_with_autosave).to be_changed
+      expect(@table4.room_with_autosave).to be_changed
+      @table3.save!
+      @table4.save!
+      expect(@table3.room.windows).to eq [@windows.first, @windows.second]
+      expect(@table4.room.windows).to eq [@windows.third]
+    end
+  end
 end

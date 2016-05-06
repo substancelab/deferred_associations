@@ -1,3 +1,9 @@
+0.6.0
+=====
+* setting an association will now result in model.changed? to be true.
+  Also model.changes will include the old attribute key with the old value.
+  This allows the :autosave option on associated objects to work correctly.
+
 0.5.8
 =====
 * fix preloading of HABTM associations in ActiveRecord >= 4.0

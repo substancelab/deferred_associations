@@ -1,0 +1,25 @@
+#!/bin/sh
+
+DIR=`pwd`
+
+if [[ $DIR == *bin ]]; then
+ cd ..
+fi
+
+echo "Your ruby version: "
+echo `ruby -v`
+
+ls -c gemfiles/*.gemfile | while read line
+do
+
+  echo "Run Spec for gemfile: $line"
+  export BUNDLE_GEMFILE=$line
+  bundle install
+  bundle exec rspec
+  echo ""
+  echo ""
+  echo ""
+  echo "========="
+done
+
+unset BUNDLE_GEMFILE
