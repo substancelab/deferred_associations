@@ -1,4 +1,4 @@
-0.6.0
+0.6.1
 =====
 * setting an association will now result in model.changed? to be true.
   Also model.changes will include the old attribute key with the old value.
