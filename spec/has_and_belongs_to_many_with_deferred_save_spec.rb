@@ -263,8 +263,8 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
 
       expect(@table1.room.doors).to eq @doors
       expect(@table2.room.doors).to eq [@doors.first]
-      expect(@table1.room.updated_at).to eq @now - 5.minutes
-      expect(@table2.room.updated_at).to eq @now - 5.minutes
+      expect(@table1.room.updated_at).to be_within(1.second).of(@now - 5.minutes)
+      expect(@table2.room.updated_at).to be_within(1.second).of(@now - 5.minutes)
     end
 
     it 'does not set changed or updated_at, if nothing changed' do
@@ -280,8 +280,8 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
       @table2.save!
       expect(@table1.room.doors).to eq @doors
       expect(@table2.room.doors).to eq [@doors.first]
-      expect(@table1.room.updated_at).to eq @now - 5.minutes # still the same
-      expect(@table2.room.updated_at).to eq @now - 5.minutes
+      expect(@table1.room.updated_at).to be_within(1.second).of(@now - 5.minutes) # still the same
+      expect(@table2.room.updated_at).to be_within(1.second).of(@now - 5.minutes)
     end
 
     it 'does change however, if the sorting changed' do
@@ -296,7 +296,7 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
       @table1.save!
       @table1.room.reload
       expect(@table1.room.doors).to eq @doors
-      expect(@table1.room.updated_at).to eq @now - 1.minutes
+      expect(@table1.room.updated_at).to be_within(1.second).of(@now - 1.minute)
     end
   end
 end

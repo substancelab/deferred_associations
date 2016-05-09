@@ -125,8 +125,8 @@ describe 'has_many_with_deferred_save' do
 
       expect(@table3.room.windows).to eq [@windows.first, @windows.second]
       expect(@table4.room.windows).to eq [@windows.third]
-      expect(@table3.room.updated_at).to eq @now - 2.minutes
-      expect(@table4.room.updated_at).to eq @now - 2.minutes
+      expect(@table3.room.updated_at).to be_within(1.second).of(@now - 2.minutes)
+      expect(@table4.room.updated_at).to be_within(1.second).of(@now - 2.minutes)
     end
 
     it 'does not set changed or updated_at, if nothing changed' do
@@ -145,8 +145,8 @@ describe 'has_many_with_deferred_save' do
       @table4.save!
       expect(@table3.room.windows).to eq [@windows.first, @windows.second]
       expect(@table4.room.windows).to eq [@windows.third]
-      expect(@table3.room.updated_at).to eq @now - 2.minutes # still the same
-      expect(@table4.room.updated_at).to eq @now - 2.minutes
+      expect(@table3.room.updated_at).to be_within(1.second).of(@now - 2.minutes) # still the same
+      expect(@table4.room.updated_at).to be_within(1.second).of(@now - 2.minutes)
     end
 
     it 'does change however, if the sorting changed' do
@@ -161,7 +161,7 @@ describe 'has_many_with_deferred_save' do
       @table3.save!
       @table3.room.reload
       expect(@table3.room.windows).to eq [@windows.first, @windows.second]
-      expect(@table3.room.updated_at).to eq @now - 1.minutes
+      expect(@table3.room.updated_at).to be_within(1.second).of(@now - 1.minute)
     end
   end
 end
