@@ -11,37 +11,37 @@ How to install
 Usage
 =====
 
-    ```ruby
-    class Room < ActiveRecord::Base
-      has_and_belongs_to_many_with_deferred_save :people
-      has_many_with_deferred_save :tables
+```ruby
+class Room < ActiveRecord::Base
+  has_and_belongs_to_many_with_deferred_save :people
+  has_many_with_deferred_save :tables
 
-      validate :usage
-      before_save :check_change
+  validate :usage
+  before_save :check_change
 
-      def usage
-        if people.size > 30
-          errors.add :people, "There are too many people in this room"
-        end
-        if tables.size > 15
-          errors.add :tables, "There are too many tables in this room"
-        end
-        # Neither people nor tables are saved to the database, if a validation error is added
-      end
-
-      def check_change
-        # you can check, if there were changes to the association
-        if people != people_without_deferred_save
-          self.update_some_relation_data(people)
-        end
-        
-        # you can also use the rails-internal changes hash
-        if changes.include?("people")
-          self.do_stuff!
-        end
-      end
+  def usage
+    if people.size > 30
+      errors.add :people, "There are too many people in this room"
     end
-    ```
+    if tables.size > 15
+      errors.add :tables, "There are too many tables in this room"
+    end
+    # Neither people nor tables are saved to the database, if a validation error is added
+  end
+
+  def check_change
+    # you can check, if there were changes to the association
+    if people != people_without_deferred_save
+      self.update_some_relation_data(people)
+    end
+    
+    # you can also use the rails-internal changes hash
+    if changes.include?("people")
+      self.do_stuff!
+    end
+  end
+end
+```
 
 Compatibility
 =============
