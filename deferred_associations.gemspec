@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = 'deferred_associations'
-  s.version = '0.6.1'
+  s.version = '0.6.2'
 
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
   s.authors = ['Martin Koerner', 'Tyler Rick', 'Alessio Caiazza']
-  s.date = '2016-05-06'
+  s.date = '2016-05-09'
   s.description = "Makes ActiveRecord defer/postpone saving the records you add to an habtm (has_and_belongs_to_many) or has_many\n                       association until you call model.save, allowing validation in the style of normal attributes. Additionally you\n                       can check inside before_save filters, if the association was altered."
   s.email = 'martin.koerner@objectfab.de'
   s.licenses = 'MIT'

@@ -30,7 +30,7 @@ module ActiveRecord
         define_method "#{collection_name}_with_deferred_save=" do |collection|
           # puts "has_and_belongs_to_many_with_deferred_save: #{collection_name} = #{collection.collect(&:id).join(',')}"
           send "unsaved_#{collection_name}=", collection
-          attribute_will_change!(collection_singular_ids)
+          attribute_will_change!(collection_name) if collection != send("#{collection_name}_without_deferred_save")
         end
 
         define_method "#{collection_name}_with_deferred_save" do |*method_args|
@@ -80,10 +80,11 @@ module ActiveRecord
 
           send "use_original_collection_reader_behavior_for_#{collection_name}=", true
           send("initialize_unsaved_#{collection_name}") if send("unsaved_#{collection_name}").nil?
-          send "#{collection_name}_without_deferred_save=", send("unsaved_#{collection_name}")
-          # /\ This is where the actual save occurs.
-          send "use_original_collection_reader_behavior_for_#{collection_name}=", false
 
+          # vv This is where the actual save occurs vv
+          send "#{collection_name}_without_deferred_save=", send("unsaved_#{collection_name}")
+
+          send "use_original_collection_reader_behavior_for_#{collection_name}=", false
           true
         end
         after_save "do_#{collection_name}_save!"

@@ -241,20 +241,62 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
 
   describe 'tables' do
     before :all do
-      @table1 = Table.create(name: 'Table1', room_id: Room.create(name: 'Kitchen').id)
-      @table2 = Table.create(name: 'Table2', room_id: Room.create(name: 'Dining room').id)
+      @now = Time.now.utc
+
+      @table1 = Table.create(name: 'Table1', room_id: Room.create(name: 'Kitchen', updated_at: @now - 10.minutes).id)
+      @table2 = Table.create(name: 'Table2', room_id: Room.create(name: 'Dining room', updated_at: @now - 10.minutes).id)
       @doors = [Door.create(name: 'Door1'), Door.create(name: 'Door2')]
     end
 
     it 'saves doors of associated room, if table gets saved' do
+      expect(Time).to receive(:now).and_return(@now - 5.minutes).at_least(1)
+
       @table1.room_with_autosave.doors = @doors
       @table2.room_with_autosave.door_ids = [@doors.first.id]
       expect(@table1.room_with_autosave).to be_changed
       expect(@table2.room_with_autosave).to be_changed
+      expect(@table1.room_with_autosave.changes.include?('doors')).to be true
+      expect(@table2.room_with_autosave.changes.include?('doors')).to be true
+
+      @table1.save!
+      @table2.save!
+
+      expect(@table1.room.doors).to eq @doors
+      expect(@table2.room.doors).to eq [@doors.first]
+      expect(@table1.room.updated_at).to eq @now - 5.minutes
+      expect(@table2.room.updated_at).to eq @now - 5.minutes
+    end
+
+    it 'does not set changed or updated_at, if nothing changed' do
+      expect(Time).to receive(:now).and_return(@now - 2.minutes).at_least(1)
+
+      # same as above
+      @table1.room_with_autosave.doors = @doors
+      @table2.room_with_autosave.door_ids = [@doors.first.id]
+
+      expect(@table1.room_with_autosave).not_to be_changed
+      expect(@table2.room_with_autosave).not_to be_changed
       @table1.save!
       @table2.save!
       expect(@table1.room.doors).to eq @doors
       expect(@table2.room.doors).to eq [@doors.first]
+      expect(@table1.room.updated_at).to eq @now - 5.minutes # still the same
+      expect(@table2.room.updated_at).to eq @now - 5.minutes
+    end
+
+    it 'does change however, if the sorting changed' do
+      # This might be unexpected, but we don't want to clutter our code with to much array comparison code
+      # This test is here to document the existing code.
+      expect(Time).to receive(:now).and_return(@now - 1.minutes).at_least(1)
+
+      @table1.room_with_autosave.reload
+      @table1.room_with_autosave.doors = @doors.reverse
+
+      expect(@table1.room_with_autosave).to be_changed
+      @table1.save!
+      @table1.room.reload
+      expect(@table1.room.doors).to eq @doors
+      expect(@table1.room.updated_at).to eq @now - 1.minutes
     end
   end
 end

@@ -103,20 +103,65 @@ describe 'has_many_with_deferred_save' do
 
   describe 'with autosave option' do
     before :all do
-      @table3 = Table.create(name: 'Table3', room_id: Room.create(name: 'Kitchen').id)
-      @table4 = Table.create(name: 'Table4', room_id: Room.create(name: 'Dining room').id)
+      @now = Time.now
+      @table3 = Table.create(name: 'Table3', room_id: Room.create(name: 'Kitchen', updated_at: @now - 5.minutes).id)
+      @table4 = Table.create(name: 'Table4', room_id: Room.create(name: 'Dining room', updated_at: @now - 5.minutes).id)
       @windows = [Window.create(name: 'South'), Window.create(name: 'West'), Window.create(name: 'East')]
     end
 
     it 'saves windows of associated room, if table gets saved' do
+      expect(Time).to receive(:now).and_return(@now - 2.minutes).at_least(1)
+
       @table3.room_with_autosave.windows = [@windows.first, @windows.second]
       @table4.room_with_autosave.window_ids = [@windows.third.id]
+
       expect(@table3.room_with_autosave).to be_changed
       expect(@table4.room_with_autosave).to be_changed
+      expect(@table3.room_with_autosave.changes.include?('windows')).to be true
+      expect(@table4.room_with_autosave.changes.include?('windows')).to be true
+
+      @table3.save!
+      @table4.save!
+
+      expect(@table3.room.windows).to eq [@windows.first, @windows.second]
+      expect(@table4.room.windows).to eq [@windows.third]
+      expect(@table3.room.updated_at).to eq @now - 2.minutes
+      expect(@table4.room.updated_at).to eq @now - 2.minutes
+    end
+
+    it 'does not set changed or updated_at, if nothing changed' do
+      expect(Time).to receive(:now).and_return(@now - 1.minutes).at_least(1)
+
+      @table3.room_with_autosave.reload
+      @table4.room_with_autosave.reload
+
+      # same as above
+      @table3.room_with_autosave.windows = [@windows.first, @windows.second]
+      @table4.room_with_autosave.window_ids = [@windows.third.id]
+
+      expect(@table3.room_with_autosave).not_to be_changed
+      expect(@table4.room_with_autosave).not_to be_changed
       @table3.save!
       @table4.save!
       expect(@table3.room.windows).to eq [@windows.first, @windows.second]
       expect(@table4.room.windows).to eq [@windows.third]
+      expect(@table3.room.updated_at).to eq @now - 2.minutes # still the same
+      expect(@table4.room.updated_at).to eq @now - 2.minutes
+    end
+
+    it 'does change however, if the sorting changed' do
+      # This might be unexpected, but we don't want to clutter our code with to much array comparison code
+      # This test is here to document the existing code.
+      expect(Time).to receive(:now).and_return(@now - 1.minutes).at_least(1)
+
+      @table3.room_with_autosave.reload
+      @table3.room_with_autosave.windows = [@windows.second, @windows.first]
+
+      expect(@table3.room_with_autosave).to be_changed
+      @table3.save!
+      @table3.room.reload
+      expect(@table3.room.windows).to eq [@windows.first, @windows.second]
+      expect(@table3.room.updated_at).to eq @now - 1.minutes
     end
   end
 end

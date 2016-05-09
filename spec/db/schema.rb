@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 1) do
   create_table 'rooms', force: true do |t|
     t.column 'name',              :string
     t.column 'maximum_occupancy', :integer
+    t.column 'updated_at',        :datetime
   end
 
   create_table 'doors_rooms', id: false, force: true do |t|

@@ -27,7 +27,7 @@ module ActiveRecord
       def define_obj_setter(collection_name, collection_singular_ids)
         define_method("#{collection_name}_with_deferred_save=") do |objs|
           instance_variable_set "@hmwds_temp_#{collection_name}", objs || []
-          attribute_will_change!(collection_singular_ids)
+          attribute_will_change!(collection_name) if objs != send("#{collection_name}_without_deferred_save")
         end
 
         method_name = "#{collection_name}="
