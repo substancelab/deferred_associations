@@ -41,7 +41,7 @@ Usage
         end
       end
     end
-    ``
+    ```
 
 Compatibility
 =============
