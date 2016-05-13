@@ -1,3 +1,10 @@
+0.6.3
+=====
+* Revert Changes form 0.6.1/0.6.2
+  - Keeping track of all array changes would be very clumsy, especially when dealling with :pop, :keep_if, :<< and so
+  on and so forth.
+  - The application has to deal with it for itself
+
 0.6.2
 =====
 * Changes hash include the name of the association instead of their ids ("people" instead of "person_ids")
