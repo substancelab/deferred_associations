@@ -1,3 +1,8 @@
+0.6.4
+=====
+* the after_save action on has_and_belongs_to_many associations is only done, if the association was loaded
+  before ( same behavior like has_many; prevents loading of all associations after save)
+
 0.6.3
 =====
 * Revert Changes form 0.6.1/0.6.2

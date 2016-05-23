@@ -77,13 +77,14 @@ module ActiveRecord
           # But we only want the old behavior in this case -- most of the time we want the *new* behavior -- so we use
           # @use_original_collection_reader_behavior as a switch.
 
-          send "use_original_collection_reader_behavior_for_#{collection_name}=", true
-          send("initialize_unsaved_#{collection_name}") if send("unsaved_#{collection_name}").nil?
+          unless send("unsaved_#{collection_name}").nil?
+            send "use_original_collection_reader_behavior_for_#{collection_name}=", true
 
-          # vv This is where the actual save occurs vv
-          send "#{collection_name}_without_deferred_save=", send("unsaved_#{collection_name}")
+            # vv This is where the actual save occurs vv
+            send "#{collection_name}_without_deferred_save=", send("unsaved_#{collection_name}")
 
-          send "use_original_collection_reader_behavior_for_#{collection_name}=", false
+            send "use_original_collection_reader_behavior_for_#{collection_name}=", false
+          end
           true
         end
         after_save "do_#{collection_name}_save!"

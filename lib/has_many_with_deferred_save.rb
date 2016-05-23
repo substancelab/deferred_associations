@@ -15,7 +15,7 @@ module ActiveRecord
 
         after_save "hmwds_update_#{collection_name}"
 
-        define_obj_setter    collection_name, collection_singular_ids
+        define_obj_setter    collection_name
         define_obj_getter    collection_name
         define_id_setter     collection_name, collection_singular_ids
         define_id_getter     collection_name, collection_singular_ids
@@ -24,7 +24,7 @@ module ActiveRecord
         define_reload_method collection_name
       end
 
-      def define_obj_setter(collection_name, collection_singular_ids)
+      def define_obj_setter(collection_name)
         define_method("#{collection_name}_with_deferred_save=") do |objs|
           instance_variable_set "@hmwds_temp_#{collection_name}", objs || []
           attribute_will_change!(collection_name) if objs != send("#{collection_name}_without_deferred_save")

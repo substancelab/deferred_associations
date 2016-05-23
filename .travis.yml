@@ -4,7 +4,7 @@ rvm:
  - 2.2.4
  - 2.3.1
  - jruby-19mode
- - jruby-9.1.0.0
+ - jruby-9.1.1.0
 
 script: "bundle exec rspec"
 
@@ -12,7 +12,7 @@ gemfile:
   - gemfiles/ar2.3.18.gemfile
   - gemfiles/ar3.2.22.gemfile
   - gemfiles/ar4.1.14.gemfile
-  - gemfiles/ar4.2.5.gemfile
+  - gemfiles/ar4.2.6.gemfile
   #-gemfiles/ar5.0.0.beta1.gemfile TODO support this in an extra version
 
 matrix:
@@ -23,5 +23,5 @@ matrix:
       gemfile: gemfiles/ar2.3.18.gemfile
     - rvm: jruby-19mode
       gemfile: gemfiles/ar2.3.18.gemfile
-    - rvm: jruby-9.1.0.0
+    - rvm: jruby-9.1.1.0
       gemfile: gemfiles/ar2.3.18.gemfile

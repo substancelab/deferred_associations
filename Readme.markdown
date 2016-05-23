@@ -46,7 +46,7 @@ end
 Compatibility
 =============
 
-Tested with Rails 2.3.18, 3.2.22, 4.1.14, 4.2.5 on Ruby 1.9.3, 2.2.4, 2.3.1 and JRuby 1.7, JRuby 9.1.0.0
+Tested with Rails 2.3.18, 3.2.22, 4.1.14, 4.2.6 on Ruby 1.9.3, 2.2.4, 2.3.1 and JRuby 1.7, JRuby 9.1.1.0
 
 Note, that Rails 3.2.14 associations are partly broken under JRuby cause of https://github.com/rails/rails/issues/11595
 You'll need to upgrade activerecord-jdbc-adapter to >= 1.3.0.beta1, if you want to use this combination.
