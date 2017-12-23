@@ -1,7 +1,7 @@
 Make ActiveRecord defer/postpone saving the records you add to an habtm (has_and_belongs_to_many) or has_many association
 until you call model.save, allowing validation in the style of normal attributes.
 
-[![Build Status](https://secure.travis-ci.org/MartinKoerner/deferred_associations.png?branch=master)](http://travis-ci.org/MartinKoerner/deferred_associations) [![Dependency Status](https://gemnasium.com/MartinKoerner/deferred_associations.png?travis)](https://gemnasium.com/MartinKoerner/deferred_associations)
+[![Build Status](https://secure.travis-ci.org/MartinKoerner/deferred_associations.png?branch=master)](http://travis-ci.org/MartinKoerner/deferred_associations)
 
 How to install
 ==============
@@ -121,7 +121,7 @@ History
 Most of the code for the habtm association was written by TylerRick for his gem [has_and_belongs_to_many_with_deferred_save](https://github.com/TylerRick/has_and_belongs_to_many_with_deferred_save)
 Mainly, I changed two things:
 
-* added compatibility for ActiveRecord 3 and 4
+* added compatibility for ActiveRecord 3, 4 & 5
 * removed singleton methods, because they interfere with caching
 
 License
@@ -129,4 +129,4 @@ License
 
 This plugin is licensed under the BSD license.
 
-2016 (c) Martin Körner
+2018 (c) Martin Körner
