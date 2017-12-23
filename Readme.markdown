@@ -46,7 +46,7 @@ end
 Compatibility
 =============
 
-Tested with Rails 2.3.18, 3.2.22, 4.1.14, 4.2.6 on Ruby 1.9.3, 2.2.4, 2.3.1 and JRuby 1.7, JRuby 9.1.1.0
+Tested with Rails 2.3.18, 3.2.22, 4.1.16, 4.2.20, 5.1.4 on Ruby 1.9.3, 2.2.8, 2.3.5 and JRuby 1.7, JRuby 9.1.9.0
 
 Note, that Rails 3.2.14 associations are partly broken under JRuby cause of https://github.com/rails/rails/issues/11595
 You'll need to upgrade activerecord-jdbc-adapter to >= 1.3.0.beta1, if you want to use this combination.
@@ -92,6 +92,22 @@ methods are not working:
    room.changed? # => true
    room.save!
    room.updated_at # => got touched!
+   ```
+
+4. If you use the ID getter, you get a copy of the IDs of the objects. So changing the entries in the array won't change
+   the IDs for real.
+   Rails 5 acts a little bit different - it lets you change the entry, but also doesn't save it.
+   deferred_associations will act the same way as in Rails 3&4.
+
+   ```ruby
+   room = Room.find(...)
+   room.people_ids # [1]
+   room.people_ids << 2
+   room.people_ids # Rails 4: [1]
+   room.people_ids # Rails 5: [1, 2], but with deferred associations, it stays at [1]
+   room.save!
+   room.reload
+   room.people_ids # Rails 4&5: [1] # even Rails 5 doesn't save the changed array
    ```
 
 Bugs
