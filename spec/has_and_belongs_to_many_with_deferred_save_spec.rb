@@ -113,14 +113,14 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
     end
 
     it 'still lets you do find' do
-      if ar4?
-        expect(@room.people2.where(name: 'Filbert').first).to eq(@people[0])
+      if ar4_or_more?
+        expect(@room.people_without_deferring.where(name: 'Filbert').first).to eq(@people[0])
         expect(@room.people_without_deferred_save.where(name: 'Filbert').first).to eq(@people[0])
         expect(@room.people.where(name: 'Filbert').first).to eq(@people[0])
       else
-        expect(@room.people2.                     find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
+        expect(@room.people_without_deferring.                     find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
         expect(@room.people_without_deferred_save.find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
-        expect(@room.people2.first(conditions: { name: 'Filbert' })).to eq(@people[0])
+        expect(@room.people_without_deferring.first(conditions: { name: 'Filbert' })).to eq(@people[0])
         expect(@room.people_without_deferred_save.first(conditions: { name: 'Filbert' })).to eq(@people[0])
 
         expect(@room.people.find(:first, conditions: { name: 'Filbert' })).to eq(@people[0])
@@ -163,15 +163,31 @@ describe 'has_and_belongs_to_many_with_deferred_save' do
       @room.people = [@people[0]]
       @room.save
       @room = Room.find(@room.id) # we don't want to let id and object setters interfere with each other
-      @room.people2_ids << @people[1].id
-      expect(@room.people2_ids).to eq([@people[0].id]) # ID array manipulation is ignored
+      @room.people_without_deferring_ids << @people[1].id
+
+      if ar5_or_more?
+        # In Rails 5, ID array manipulation is taken into account, but only temporarily,
+        # therefore deferred_association doesn't mimic this behavior
+        expect(@room.people_without_deferring_ids).to eq([@people[0].id, @people[1].id])
+      else
+        # ID array manipulation is ignored
+        expect(@room.people_without_deferring_ids).to eq([@people[0].id])
+      end
 
       expect(@room.person_ids.size).to eq(1)
       @room.person_ids << @people[1].id
+
+      # deferred_association doesn't remember the additional ID, no matter, which AR version
+      # we are in
       expect(@room.person_ids).to eq([@people[0].id])
       expect(Room.find(@room.id).person_ids).to eq([@people[0].id])
       expect(@room.save).to be true
-      expect(Room.find(@room.id).person_ids).to eq([@people[0].id]) # ID array manipulation is ignored, too
+
+      # Original association didn't save the temporarily saved changes,
+      # the deferred association also looses the change on reload
+      @room = Room.find(@room.id)
+      expect(@room.people_without_deferring_ids).to eq([@people[0].id])
+      expect(@room.person_ids).to eq([@people[0].id])
     end
 
     it 'should work with id setters' do

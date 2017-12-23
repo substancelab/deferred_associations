@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'has_and_belongs_to_many_with_deferred_save'
 
-if ar4?
-  describe 'ActiveRecord4 specials' do
+if ar4_or_more?
+  describe 'ActiveRecord4/5 specials' do
     before :all do
       #ActiveRecord::Base.logger = Logger.new(STDOUT) # uncomment for debugging statements
       @people = []
@@ -64,21 +64,21 @@ if ar4?
       end
 
       it 'should preload with non-deferred association' do
-        rooms = Room.where(id: [@room1.id, @room2.id, @room3.id]).preload(:people2)
+        rooms = Room.where(id: [@room1.id, @room2.id, @room3.id]).preload(:people_without_deferring)
         rooms = rooms.to_a # execute original query, together with preloading the association
         room1 = rooms.first
         room2 = rooms.second
         room3 = rooms.third
         # association is autoloaded
-        expect(room1.people2.loaded?).to be true
-        expect(room2.people2.loaded?).to be true
-        expect(room3.people2.loaded?).to be true
+        expect(room1.people_without_deferring.loaded?).to be true
+        expect(room2.people_without_deferring.loaded?).to be true
+        expect(room3.people_without_deferring.loaded?).to be true
 
         expect(ActiveRecord::Base).not_to receive(:connection)
 
-        expect(room1.people2.map(&:name)).to match_array(%w(Miguel Rainer))
-        expect(room2.people2.map(&:name)).to match_array(%w(Filbert Miguel))
-        expect(room3.people2.map(&:name)).to match_array(%w())
+        expect(room1.people_without_deferring.map(&:name)).to match_array(%w(Miguel Rainer))
+        expect(room2.people_without_deferring.map(&:name)).to match_array(%w(Filbert Miguel))
+        expect(room3.people_without_deferring.map(&:name)).to match_array(%w())
       end
     end
   end

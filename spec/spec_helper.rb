@@ -18,8 +18,6 @@ ActiveRecord::Base.establish_connection(:sqlite3mem)
 ActiveRecord::Migration.verbose = false
 load(File.join(plugin_test_dir, 'db', 'schema.rb'))
 
-Dir["#{plugin_test_dir}/models/*.rb"].each { |file| require file }
-
 RSpec.configure do |config|
   config.raise_errors_for_deprecations!
 
@@ -44,6 +42,12 @@ def ar2?
   ActiveRecord::VERSION::STRING < '3'
 end
 
-def ar4?
+def ar4_or_more?
   ActiveRecord::VERSION::STRING >= '4'
 end
+
+def ar5_or_more?
+  ActiveRecord::VERSION::STRING >= '5'
+end
+
+Dir["#{plugin_test_dir}/models/*.rb"].each { |file| require file }

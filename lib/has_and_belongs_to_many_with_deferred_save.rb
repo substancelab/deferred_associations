@@ -41,8 +41,10 @@ module ActiveRecord
           end
         end
 
-        alias_method_chain :"#{collection_name}=", 'deferred_save'
-        alias_method_chain :"#{collection_name}", 'deferred_save'
+        alias_method(:"#{collection_name}_without_deferred_save=", :"#{collection_name}=")
+        alias_method(:"#{collection_name}=", :"#{collection_name}_with_deferred_save=")
+        alias_method(:"#{collection_name}_without_deferred_save", :"#{collection_name}")
+        alias_method(:"#{collection_name}", :"#{collection_name}_with_deferred_save")
 
         define_method "#{collection_singular_ids}_with_deferred_save" do |*method_args|
           if send("use_original_collection_reader_behavior_for_#{collection_name}")
@@ -53,7 +55,8 @@ module ActiveRecord
           end
         end
 
-        alias_method_chain :"#{collection_singular_ids}", 'deferred_save'
+        alias_method(:"#{collection_singular_ids}_without_deferred_save", :"#{collection_singular_ids}")
+        alias_method(:"#{collection_singular_ids}", :"#{collection_singular_ids}_with_deferred_save")
 
         # only needed for ActiveRecord >= 3.0
         if ActiveRecord::VERSION::STRING >= '3'
@@ -63,7 +66,9 @@ module ActiveRecord
             new_values = reflection_wrapper.klass.find(ids)
             send("#{collection_name}=", new_values)
           end
-          alias_method_chain :"#{collection_singular_ids}=", 'deferred_save'
+
+          alias_method(:"#{collection_singular_ids}_without_deferred_save=", :"#{collection_singular_ids}=")
+          alias_method(:"#{collection_singular_ids}=", :"#{collection_singular_ids}_with_deferred_save=")
         end
 
         define_method "do_#{collection_name}_save!" do
@@ -87,7 +92,7 @@ module ActiveRecord
           end
           true
         end
-        after_save "do_#{collection_name}_save!"
+        after_save :"do_#{collection_name}_save!"
 
         define_method "reload_with_deferred_save_for_#{collection_name}" do |*method_args|
           # Reload from the *database*, discarding any unsaved changes.
@@ -97,7 +102,9 @@ module ActiveRecord
             # unsaved_collection that it had before the reload.
           end
         end
-        alias_method_chain :reload, "deferred_save_for_#{collection_name}"
+
+        alias_method(:"reload_without_deferred_save_for_#{collection_name}", :reload)
+        alias_method(:reload, :"reload_with_deferred_save_for_#{collection_name}")
 
         define_method "initialize_unsaved_#{collection_name}" do |*method_args|
           elements = send("#{collection_name}_without_deferred_save", *method_args)

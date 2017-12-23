@@ -20,7 +20,8 @@ class ArrayToAssociationWrapper < Array
     end
   end
 
-  alias_method_chain :include?, 'deferred_save'
+  alias_method(:include_without_deferred_save?, :include?)
+  alias_method(:include?, :include_with_deferred_save?)
 
   def find_with_deferred_save(*args)
     if @association_owner.present?
@@ -30,7 +31,8 @@ class ArrayToAssociationWrapper < Array
     end
   end
 
-  alias_method_chain :find, :deferred_save
+  alias_method(:find_without_deferred_save, :find)
+  alias_method(:find, :find_with_deferred_save)
 
   def first_with_deferred_save(*args)
     if @association_owner.present?
@@ -40,7 +42,8 @@ class ArrayToAssociationWrapper < Array
     end
   end
 
-  alias_method_chain :first, :deferred_save
+  alias_method(:first_without_deferred_save, :first)
+  alias_method(:first, :first_with_deferred_save)
 
   def last_with_deferred_save(*args)
     if @association_owner.present?
@@ -50,7 +53,8 @@ class ArrayToAssociationWrapper < Array
     end
   end
 
-  alias_method_chain :last, :deferred_save
+  alias_method(:last_without_deferred_save, :last)
+  alias_method(:last, :last_with_deferred_save)
 
   define_method :method_missing do |method, *args|
     # puts "#{self.class}.method_missing(#{method}) (#{collection_without_deferred_save.inspect})"

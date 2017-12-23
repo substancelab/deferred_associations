@@ -7,9 +7,13 @@ class Room < ActiveRecord::Base
   before_save :diff_before_module
 
   has_and_belongs_to_many_with_deferred_save :people, before_add: :before_adding_person
-  has_and_belongs_to_many :people2, class_name: 'Person'
+  has_and_belongs_to_many :people_without_deferring, class_name: 'Person'
   has_and_belongs_to_many_with_deferred_save :doors
 
+  if ar5_or_more?
+    # without it, AR5 would throw a deprecation warning
+    attribute :tables
+  end
   has_many_with_deferred_save :tables
   has_many_with_deferred_save :chairs, through: :tables # TODO: test compatibility with through associations
 

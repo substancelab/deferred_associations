@@ -13,7 +13,7 @@ module ActiveRecord
           logger.warn "You are using the option :through on #{name}##{collection_name}. This was not tested very much with has_many_with_deferred_save. Please write many tests for your functionality!"
         end
 
-        after_save "hmwds_update_#{collection_name}"
+        after_save :"hmwds_update_#{collection_name}"
 
         define_obj_setter    collection_name
         define_obj_getter    collection_name
@@ -30,8 +30,8 @@ module ActiveRecord
           attribute_will_change!(collection_name) if objs != send("#{collection_name}_without_deferred_save")
         end
 
-        method_name = "#{collection_name}="
-        alias_method_chain method_name, :deferred_save
+        alias_method(:"#{collection_name}_without_deferred_save=", :"#{collection_name}=")
+        alias_method(:"#{collection_name}=", :"#{collection_name}_with_deferred_save=")
       end
 
       def define_obj_getter(collection_name)
@@ -55,7 +55,8 @@ module ActiveRecord
           result
         end
 
-        alias_method_chain collection_name, :deferred_save
+        alias_method(:"#{collection_name}_without_deferred_save", :"#{collection_name}")
+        alias_method(:"#{collection_name}", :"#{collection_name}_with_deferred_save")
       end
 
       def define_id_setter(collection_name, collection_singular_ids)
@@ -66,7 +67,9 @@ module ActiveRecord
             new_values = send("#{collection_name}_without_deferred_save").klass.find(ids)
             send("#{collection_name}=", new_values)
           end
-          alias_method_chain :"#{collection_singular_ids}=", 'deferred_save'
+
+          alias_method(:"#{collection_singular_ids}_without_deferred_save=", :"#{collection_singular_ids}=")
+          alias_method(:"#{collection_singular_ids}=", :"#{collection_singular_ids}_with_deferred_save=")
         end
       end
 
@@ -74,7 +77,8 @@ module ActiveRecord
         define_method "#{collection_singular_ids}_with_deferred_save" do
           send(collection_name).map { |e| e[:id] }
         end
-        alias_method_chain :"#{collection_singular_ids}", 'deferred_save'
+        alias_method(:"#{collection_singular_ids}_without_deferred_save", :"#{collection_singular_ids}")
+        alias_method(:"#{collection_singular_ids}", :"#{collection_singular_ids}_with_deferred_save")
       end
 
       def define_update_method(collection_name)
@@ -100,7 +104,8 @@ module ActiveRecord
             instance_variable_set "@hmwds_temp_#{collection_name}", nil
           end
         end
-        alias_method_chain :reload, "deferred_save_for_#{collection_name}"
+        alias_method(:"reload_without_deferred_save_for_#{collection_name}", :reload)
+        alias_method(:reload, :"reload_with_deferred_save_for_#{collection_name}")
       end
     end
   end

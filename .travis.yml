@@ -1,10 +1,10 @@
 language: ruby
 rvm:
  - 1.9.3
- - 2.2.4
- - 2.3.1
+ - 2.2.8
+ - 2.3.5
  - jruby-19mode
- - jruby-9.1.1.0
+ - jruby-9.1.9.0
 
 script: "bundle exec rspec"
 
@@ -13,7 +13,7 @@ gemfile:
   - gemfiles/ar3.2.22.gemfile
   - gemfiles/ar4.1.14.gemfile
   - gemfiles/ar4.2.6.gemfile
-  #-gemfiles/ar5.0.0.beta1.gemfile TODO support this in an extra version
+  - gemfiles/ar5.1.4.gemfile
 
 matrix:
   exclude:

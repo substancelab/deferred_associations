@@ -84,7 +84,7 @@ describe 'has_many_with_deferred_save' do
 
     it 'should defer association methods' do
       expect(@room.chairs.first).to eq(@chair1)
-      if ar4?
+      if ar4_or_more?
         expect(@room.chairs.where(name: 'First')).to eq([@chair1])
       else
         expect(@room.chairs.find(:all, conditions: { name: 'First' })).to eq([@chair1])
