@@ -1,13 +1,15 @@
 module ActiveRecord
   module Associations
     module ClassMethods
-      def has_many_with_deferred_save(*args)
+      def has_many_with_deferred_save(association, options)
+        args = [association, options]
+
         collection_name = args[0].to_s
         collection_singular_ids = "#{collection_name.singularize}_ids"
 
         return if method_defined?("#{collection_name}_with_deferred_save")
 
-        has_many *args
+        has_many association, **options
 
         if args[1].is_a?(Hash) && args[1].keys.include?(:through)
           logger.warn "You are using the option :through on #{name}##{collection_name}. This was not tested very much with has_many_with_deferred_save. Please write many tests for your functionality!"
